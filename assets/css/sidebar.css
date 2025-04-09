@@ -1,0 +1,317 @@
+body {
+    display: flex;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: #f8f9fa;
+    color: #2c3e50;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg,rgb(7, 46, 85),rgb(10, 74, 116));
+    color: white;
+    padding: 25px;
+    height: 100vh;
+    position: fixed;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    left: 0;
+    top: 0;
+    transition: all 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li a {
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+.main-content {
+    margin-left: 280px;
+    padding: 30px;
+    flex-grow: 1;
+}
+
+/* Styles pour les notifications */
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: 5px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 14px;
+    border: 2px solid #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-item {
+    position: relative;
+    margin: 5px 0;
+}
+
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 350px;
+}
+
+.notification {
+    background-color: #fff;
+    border-left: 4px solid #2196F3;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 16px;
+    border-radius: 4px;
+    animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-out 2.5s forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(120%); opacity: 0; }
+}
+
+/* Ajout des styles communs */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 400px;
+}
+
+.alert {
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive modals */
+
+
+/* Responsive alerts */
+.alert-container {
+    width: 90%;
+    max-width: 400px;
+}
+
+/* Responsive notifications */
+.notification {
+    width: 90%;
+    max-width: 300px;
+    margin: 10px;
+}
+
+/* Ajustements pour les petits écrans */
+@media (max-width: 768px) {
+    .btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    textarea.form-control {
+        min-height: 40px;
+    }
+}
+
+/* Ajustements pour les très petits écrans */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .btn-group-vertical {
+        min-width: 100px;
+    }
+}
+
+/* Styles pour les boutons d'action */
+.btn-action {
+    margin: 2px;
+    min-width: 100px;
+}
+
+.message-input {
+    margin: 10px 0;
+}
+
+.confirm-buttons {
+    margin-top: 10px;
+}
+
+.confirm-buttons button {
+    margin: 2px;
+}
+
+/* Styles pour le menu hamburger */
+.hamburger-menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    background: #072e55;
+    border: none;
+    cursor: pointer;
+    padding: 12px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hamburger-menu span {
+    display: block; 
+    width: 24px;
+    height: 2px;
+    background-color: white;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Media queries pour le responsive */
+@media screen and (max-width: 768px) {
+    .hamburger-menu {
+        display: flex !important;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 998;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding-top: 80px;
+    }
+}
+
+/* Animation du hamburger */
+.hamburger-menu.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 7px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.hamburger-menu.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -7px);
+}
+
+/* Overlay pour fermer le menu sur mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Styles pour le menu container */
+.menu-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    z-index: 9999;
+}
+
+@media (min-width: 769px) {
+    .menu-container {
+        display: none;
+    }
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .d-md-none {
+        display: block !important;
+    }
+}
+
+/* Ajout d'un effet de survol */
+.sidebar a:hover {
+    background-color: #f0f0f0; /* Couleur de fond au survol */
+    transition: background-color 0.3s ease;
+}
+
+/* Animation de pulsation pour les notifications */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+} 

@@ -1,0 +1,296 @@
+/* Styles généraux */
+body {
+    display: block;
+}
+
+.main-content {
+    margin-left: 0;
+    padding: 15px;
+}
+
+/* Top bar */
+.top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.top-bar h1 {
+    font-size: clamp(18px, 4vw, 24px);
+    margin: 0;
+}
+
+.top-bar .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-bar .profile h4 {
+    font-size: clamp(14px, 3vw, 18px);
+    margin: 0;
+}
+
+.top-bar .profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3498db;
+}
+
+/* Dashboard stats */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: clamp(14px, 2.5vw, 18px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+/* Table styles */
+.recent-requests {
+    overflow-x: auto;
+    padding: 15px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.recent-requests h2 {
+    color: #2c3e50;
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.recent-requests table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.recent-requests th, .recent-requests td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.recent-requests th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.recent-requests tr:hover {
+    background: #f8f9fa;
+}
+
+/* Buttons */
+.approve, .reject {
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.approve {
+    background: #27ae60;
+    color: white;
+}
+
+.approve:hover {
+    background: #219a52;
+}
+
+.reject {
+    background: #e74c3c;
+    color: white;
+}
+
+.reject:hover {
+    background: #c0392b;
+}
+
+/* Notification styles */
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: 5px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 14px;
+    border: 2px solid #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Nav styles */
+.nav-item {
+    position: relative;
+    margin: 5px 0;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Message input */
+.message-input {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.message-input textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Table responsiveness */
+    .recent-requests {
+        padding: 10px;
+    }
+    
+    .recent-requests th, 
+    .recent-requests td {
+        padding: 10px 8px;
+    }
+    
+    /* Condensed view for Type column */
+    .recent-requests th:nth-child(3), 
+    .recent-requests td:nth-child(3) {
+        max-width: 80px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+    
+    .top-bar .profile {
+        margin-top: 10px;
+    }
+    
+    /* Table specific mobile styles */
+    .recent-requests table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .recent-requests th, 
+    .recent-requests td {
+        padding: 8px 5px;
+        font-size: 13px;
+    }
+    
+    /* Hide less important columns on very small screens */
+    .recent-requests th:nth-child(3), 
+    .recent-requests td:nth-child(3) {
+        display: none;
+    }
+    
+    /* Compact form buttons */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Modal styling for mobile */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-box {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .recent-requests h2 {
+        font-size: 18px;
+    }
+    
+    /* Further simplify table for smallest screens */
+    .recent-requests th:nth-child(5), 
+    .recent-requests td:nth-child(5) {
+        display: none;
+    }
+    
+    /* Make textareas smaller on mobile */
+    textarea.comment-text {
+        min-height: 40px !important;
+    }
+} 

@@ -1,0 +1,223 @@
+/* Variables CSS */
+:root {
+    --primary-gradient: linear-gradient(135deg, #2c3e50, #3498db);
+    --primary-color: #3498db;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --bg-white: #ffffff;
+    --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+    --transition-base: all 0.3s ease;
+    --border-radius: 10px;
+}
+
+/* Stats Container */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    cursor: pointer;
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-card.total {
+    grid-column: 1 / -1;
+    background: var(--primary-gradient);
+    pointer-events: none;
+}
+
+.stat-card.total i,
+.stat-card.total .stat-number,
+.stat-card.total .stat-label {
+    color: var(--bg-white);
+}
+
+.stat-card.active {
+    background: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.stat-card.active i,
+.stat-card.active .stat-number,
+.stat-card.active .stat-label {
+    color: var(--bg-white);
+}
+
+.stat-card:hover:not(.total) {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card i {
+    font-size: 1rem;
+    margin-bottom: 0.1rem;
+    color: var(--primary-color);
+}
+
+.stat-number {
+    display: block;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin: 0.1rem 0;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table Styles */
+.history-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.custom-table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.custom-table th {
+    background: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+    padding: 1rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.custom-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+    color: #2c3e50;
+}
+
+.custom-table td strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.custom-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.custom-table tbody tr:nth-child(even):hover {
+    background-color: #e9ecef;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.85rem !important;
+    border: none;
+}
+
+.badge.bg-info {
+    background-color: #3498db !important;
+    color: white;
+}
+
+.badge.bg-success {
+    background-color: #2ecc71 !important;
+    color: white;
+}
+
+.badge.bg-danger {
+    background-color: #e74c3c !important;
+    color: white;
+}
+
+.badge.bg-warning {
+    background-color: #f1c40f !important;
+    color: #2c3e50 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #95a5a6 !important;
+    color: white;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+        height: 70px;
+    }
+
+    .table-responsive {
+        border: 0;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 0.75rem;
+    }
+
+    .custom-table {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .history-card {
+        padding: 1rem;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 0.75rem;
+    }
+} 
