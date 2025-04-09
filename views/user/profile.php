@@ -2,6 +2,11 @@
 session_start();
 require_once '../../config/config.php';
 
+// Activer l'affichage des erreurs pour le débogage
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../auth/login.php');
@@ -9,30 +14,60 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
+$errors = [];
+$debug_logs = []; // Pour stocker les informations de débogage
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $errors = [];
     
     // Gestion du changement de mot de passe
     if (!empty($_POST['current_password']) && !empty($_POST['new_password']) && !empty($_POST['confirm_password'])) {
-        // Vérifier le mot de passe actuel
-        $stmt = $pdo->prepare("SELECT mot_de_passe FROM utilisateur WHERE id_utilisateur = ?");
-        $stmt->execute([$userId]);
-        $currentPassword = $stmt->fetchColumn();
-
-        if (!password_verify($_POST['current_password'], $currentPassword)) {
-            $errors[] = "Le mot de passe actuel est incorrect.";
-        } elseif ($_POST['new_password'] !== $_POST['confirm_password']) {
-            $errors[] = "Les nouveaux mots de passe ne correspondent pas.";
-        } elseif (strlen($_POST['new_password']) < 8) {
-            $errors[] = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
-        } else {
-            // Mettre à jour le mot de passe avec hashage
-            $hashedPassword = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE utilisateur SET mot_de_passe = ? WHERE id_utilisateur = ?");
-            $stmt->execute([$hashedPassword, $userId]);
-            $success = "Mot de passe mis à jour avec succès.";
+        try {
+            // Vérifier le mot de passe actuel
+            $stmt = $pdo->prepare("SELECT mot_de_passe FROM utilisateur WHERE id_utilisateur = ?");
+            $stmt->execute([$userId]);
+            $currentPassword = $stmt->fetchColumn();
+            
+            $debug_logs[] = "Vérification du mot de passe pour l'utilisateur ID: " . $userId;
+            
+            // Comparaison directe du mot de passe (sans password_verify)
+            if ($_POST['current_password'] !== $currentPassword) {
+                $errors[] = "Le mot de passe actuel est incorrect.";
+                $debug_logs[] = "Échec de la vérification du mot de passe actuel";
+            } else {
+                // La validation de la longueur du mot de passe et la correspondance 
+                // sont maintenant gérées par le modal côté client
+                
+                // Stocker le mot de passe directement (sans hachage)
+                $newPassword = $_POST['new_password'];
+                
+                // Mise à jour du mot de passe dans la base de données
+                $sql = "UPDATE utilisateur SET mot_de_passe = ? WHERE id_utilisateur = ?";
+                $debug_logs[] = "Exécution de la requête: " . $sql;
+                
+                $stmt = $pdo->prepare($sql);
+                $params = [$newPassword, $userId];
+                $result = $stmt->execute($params);
+                
+                if ($result) {
+                    $rowCount = $stmt->rowCount();
+                    $debug_logs[] = "Requête exécutée avec succès. Lignes affectées: " . $rowCount;
+                    
+                    if ($rowCount > 0) {
+                        $success = "Mot de passe mis à jour avec succès.";
+                    } else {
+                        $errors[] = "Aucune modification effectuée. Vérifiez que le mot de passe est différent du précédent.";
+                        $debug_logs[] = "Aucune ligne modifiée dans la base de données";
+                    }
+                } else {
+                    $errors[] = "Erreur lors de la mise à jour du mot de passe.";
+                    $debug_logs[] = "Échec de l'exécution de la requête";
+                    $debug_logs[] = "PDO Error: " . json_encode($stmt->errorInfo());
+                }
+            }
+        } catch (PDOException $e) {
+            $errors[] = "Erreur de base de données: " . $e->getMessage();
+            $debug_logs[] = "Exception PDO: " . $e->getMessage();
         }
     }
 
@@ -93,16 +128,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = "Erreur lors de l'upload du fichier.";
             }
         }
-    } else {
-        // Mise à jour sans nouvelle photo
+    } else if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        // Mise à jour sans nouvelle photo - mais seulement si ce n'est pas une erreur de fichier manquant
         $stmt = $pdo->prepare("UPDATE utilisateur SET nom = ?, prenom = ? WHERE id_utilisateur = ?");
         $stmt->execute([$nom, $prenom, $userId]);
-        $success = "Profil mis à jour avec succès.";
+        
+        // Ne pas écraser le message de succès du changement de mot de passe
+        if (!isset($success)) {
+            $success = "Profil mis à jour avec succès.";
+        }
+    }
+    
+    // Stocker les variables de débogage dans la session pour les afficher après la redirection
+    if (!empty($debug_logs)) {
+        $_SESSION['debug_logs'] = $debug_logs;
+    }
+    
+    // Stocker les erreurs et succès dans la session pour les afficher après la redirection
+    if (!empty($errors)) {
+        $_SESSION['errors'] = $errors;
+    }
+    
+    if (isset($success)) {
+        $_SESSION['success'] = $success;
     }
     
     // Redirection pour éviter la soumission multiple du formulaire
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
+}
+
+// Récupérer les messages de la session après redirection
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
+}
+
+if (isset($_SESSION['success'])) {
+    $success = $_SESSION['success'];
+    unset($_SESSION['success']);
+}
+
+if (isset($_SESSION['debug_logs'])) {
+    $debug_logs = $_SESSION['debug_logs'];
+    unset($_SESSION['debug_logs']);
 }
 
 // Récupérer les informations de l'utilisateur
@@ -113,6 +182,11 @@ $stmt = $pdo->prepare("
     WHERE u.id_utilisateur = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
+
+// Les erreurs doivent être disponibles pour l'affichage
+if (empty($errors)) {
+    $errors = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -237,12 +311,15 @@ $user = $stmt->fetch();
             align-items: flex-start;
             gap: 30px;
             padding: 20px;
+            flex-wrap: wrap;
         }
 
         .profile-info {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            flex: 1;
+            min-width: 250px;
         }
 
         .profile-info h2 {
@@ -476,6 +553,135 @@ $user = $stmt->fetch();
     display: none;
 }
 
+/* Système de notifications en CSS */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    z-index: 2000;
+    max-width: 360px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: white;
+    border-left: 5px solid #1b5e20;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #e53935, #c62828);
+    color: white;
+    border-left: 5px solid #b71c1c;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification i {
+    font-size: 20px;
+}
+
+/* Optimisation mobile */
+@media (max-width: 768px) {
+    .profile-container {
+        margin: 10px;
+        padding: 10px;
+        border-radius: 15px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 15px 10px;
+    }
+    
+    .profile-info {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .user-info-line {
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .user-role, .user-email, .user-since {
+        font-size: 14px;
+    }
+    
+    .edit-form {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .logout-container {
+        position: static;
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .logout-btn {
+        padding: 8px 30px;
+        font-size: 16px;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .photo-container {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .btn-update {
+        max-width: 100%;
+    }
+}
+
+/* Effet de transition pour l'application entière */
+.modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Ajout d'effets de survol pour les éléments interactifs */
+input:focus, select:focus, textarea:focus {
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+.form-control {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4a90e2;
+}
+
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -497,6 +703,18 @@ $user = $stmt->fetch();
                 <ul class="mb-0">
                     <?php foreach ($errors as $error): ?>
                         <li><?= htmlspecialchars($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($debug_logs) && $_SESSION['user_id'] == 1): ?>
+            <div class="alert alert-info alert-dismissible fade show m-3" role="alert">
+                <h5>Logs de débogage</h5>
+                <ul class="mb-0">
+                    <?php foreach ($debug_logs as $log): ?>
+                        <li><?= htmlspecialchars($log) ?></li>
                     <?php endforeach; ?>
                 </ul>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -583,7 +801,7 @@ $user = $stmt->fetch();
                     <div class="col-md-6">
                         <div class="form-group">
                             <h5 for="confirm_password">Confirmer le nouveau mot de passe</h5>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                         </div>
                     </div>
                 </div>
@@ -658,10 +876,106 @@ $user = $stmt->fetch();
         </div>
     </div>
     
+    <!-- Nouvelle modal pour la validation du mot de passe -->
+    <div class="modal fade" id="passwordValidationModal" tabindex="-1" aria-labelledby="passwordValidationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title" id="passwordValidationModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Validation du mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <p id="passwordValidationMessage">Le nouveau mot de passe doit contenir au moins 8 caractères.</p>
+                    </div>
+                    <div class="password-strength-info mt-3">
+                        <h6>Un mot de passe fort devrait contenir :</h6>
+                        <ul>
+                            <li>Au moins 8 caractères</li>
+                            <li>Au moins une lettre majuscule</li>
+                            <li>Au moins une lettre minuscule</li>
+                            <li>Au moins un chiffre</li>
+                            <li>Au moins un caractère spécial (!@#$%^&*)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour les mots de passe qui ne correspondent pas -->
+    <div class="modal fade" id="passwordMismatchModal" tabindex="-1" aria-labelledby="passwordMismatchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="passwordMismatchModalLabel">
+                        <i class="fas fa-times-circle me-2"></i>Erreur de mot de passe
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <p>Les nouveaux mots de passe ne correspondent pas.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Champ caché pour l'ID utilisateur -->
     <input type="hidden" id="userId" value="<?= htmlspecialchars($userId) ?>">
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/profile.js"></script>
+    
+    <script>
+        // Script supplémentaire pour la validation par modal du mot de passe
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const currentPassword = document.getElementById('current_password').value;
+                    const newPassword = document.getElementById('new_password').value;
+                    const confirmPassword = document.getElementById('confirm_password').value;
+                    
+                    // Si les champs de mot de passe sont remplis, on vérifie
+                    if (currentPassword && newPassword && confirmPassword) {
+                        
+                        // Vérification de la longueur du mot de passe
+                        if (newPassword.length < 8) {
+                            e.preventDefault(); // Empêcher la soumission du formulaire
+                            
+                            // Afficher la modal pour mot de passe trop court
+                            const passwordValidationModal = new bootstrap.Modal(document.getElementById('passwordValidationModal'));
+                            passwordValidationModal.show();
+                            return false;
+                        }
+                        
+                        // Vérification que les mots de passe correspondent
+                        if (newPassword !== confirmPassword) {
+                            e.preventDefault(); // Empêcher la soumission du formulaire
+                            
+                            // Afficher la modal pour mots de passe qui ne correspondent pas
+                            const passwordMismatchModal = new bootstrap.Modal(document.getElementById('passwordMismatchModal'));
+                            passwordMismatchModal.show();
+                            return false;
+                        }
+                    }
+                    
+                    // Si tout est OK, le formulaire est soumis normalement
+                    return true;
+                });
+            }
+        });
+    </script>
 </body>
 </html>

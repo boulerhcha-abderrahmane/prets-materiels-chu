@@ -1,6 +1,6 @@
 <?php
 function uploadPhoto($photo) {
-    $target_dir = "uploads/photos/";
+    $target_dir = "../../uploads/user_photos/";
     if (!file_exists($target_dir)) {
         mkdir($target_dir, 0777, true);
     }
@@ -35,7 +35,13 @@ function uploadPhoto($photo) {
     }
 
     if (move_uploaded_file($photo["tmp_name"], $target_file)) {
-        return ['success' => true, 'filename' => $newFileName];
+        // Important: retourner le chemin à stocker dans la BDD (sans le ../../)
+        $db_path = 'uploads/user_photos/' . $newFileName;
+        return [
+            'success' => true, 
+            'filename' => $newFileName, 
+            'path' => $db_path
+        ];
     } else {
         return [
             'success' => false, 

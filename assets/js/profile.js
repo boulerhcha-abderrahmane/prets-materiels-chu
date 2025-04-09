@@ -104,29 +104,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Validation du mot de passe
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            
-            if (newPassword && confirmPassword) {
-                if (newPassword.length < 8) {   
-                    e.preventDefault();
-                    alert('Le nouveau mot de passe doit contenir au moins 8 caractères.');
-                } else if (newPassword !== confirmPassword) {   
-                    e.preventDefault();
-                    alert('Les mots de passe ne correspondent pas.');
-                }
-            }
-        });
-    }
+
 
     // Fonction pour ouvrir le modal de zoom
     window.openPhotoZoom = function() {
         const previewImage = document.getElementById('previewImage');
         const zoomedImage = document.getElementById('zoomedImage');
-        zoomedImage.src = previewImage.src;
+        
+        // Assurer que l'image source est correcte
+        let imgSrc = previewImage.src;
+        
+        // Si le chemin ne contient pas déjà uploads/user_photos et ce n'est pas un data URL
+        if (!imgSrc.includes('uploads/user_photos/') && !imgSrc.startsWith('data:')) {
+            // Extraire le nom du fichier de l'URL
+            const fileName = imgSrc.split('/').pop();
+            // Reconstruire l'URL avec le chemin correct
+            imgSrc = '../../uploads/user_photos/' + fileName;
+        }
+        
+        zoomedImage.src = imgSrc;
         const photoZoomModal = new bootstrap.Modal(document.getElementById('photoZoomModal'));
         photoZoomModal.show();
     };

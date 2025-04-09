@@ -43,17 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="assets/logo/logo-chu.png" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     <style>
-        :root {
-  
-            --secondary-color: #3498db;
-            --accent-color: #2980b9;
-            --success-color: #2ecc71;
-           
-            --border-color: #e0e0e0;
+           :root {
+            --primary-color:#2c82c9; /* Bleu professionnel plus foncé */
+            --secondary-color: #2c82c9; /* Bleu secondaire */
+            --accent-color: #2c82c9; /* Bleu accent */
+            --success-color: #28a745; /* Vert pour les messages de succès */
+            --danger-color: #dc3545; /* Rouge pour les erreurs */
+            --warning-color: #ffc107; /* Jaune pour les avertissements */
+            --text-color: #333333; /* Texte principal */
+            --text-light: #6c757d; /* Texte secondaire */
+            --border-color: #e0e0e0; /* Bordures */
+            --background-color: #f8f9fa; /* Fond clair */
         }
 
         body {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg,rgb(15, 83, 139), #3498db);
             min-height: 100vh;
             display: flex;
             align-items: center;
