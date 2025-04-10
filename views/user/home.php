@@ -76,7 +76,15 @@ if (isset($_SESSION['status_message'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/home.css">
+    <style>
+        #searchInput:focus {
+            box-shadow: 0 0 15px 12px rgba(25, 135, 255, 0.6) !important;
+            outline: none;
+            border-color: #0d6efd !important;
+        }
+    </style>
 </head>
+<br><br>
 <body>  
     <!-- Inclure la navbar -->
     <?php include '../../includes/navbar.php'; ?>
@@ -88,8 +96,9 @@ if (isset($_SESSION['status_message'])) {
         <h2 class="section-title">Matériels Disponibles</h2>
         
         <div class="search-bar">
-            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un matériel...">
+            <input type="text" id="searchInput" class="form-control border border-primary rounded-pill shadow"  !important;" placeholder="Rechercher un matériel...">
         </div>
+        <br><br>
 
         <div class="row g-3" id="materielsContainer">
             <?php if (empty($materiels)): ?>
@@ -148,5 +157,6 @@ if (isset($_SESSION['status_message'])) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script src="../../assets/js/home.js"></script>
+    <?php include '../../includes/footer.php'; ?>
 </body>
 </html>

@@ -132,14 +132,24 @@ if (count($materiels_en_retard) > 0) {
         $messageHtml .= "Cordialement,<br>";
         $messageHtml .= "Le Service de Gestion des Prêts";
         
+        // Ajouter des logs de diagnostic
+        error_log("==== ENVOI EMAIL BLOCAGE ====");
+        error_log("Email utilisateur: " . ($user['email'] ?? 'Non défini'));
+        
         $emailResult = $emailService->sendEmail(
             $user['email'],
             'Suspension des emprunts - Matériels en retard',
             $messageHtml
         );
+        
+        // Enregistrer le résultat
+        error_log("Résultat envoi email: " . json_encode($emailResult));
 
         if ($emailResult['success']) {
             $_SESSION['blocage_email_envoye'] = true;
+            error_log("Flag blocage_email_envoye défini à true");
+        } else {
+            error_log("ÉCHEC envoi email blocage: " . ($emailResult['error'] ?? 'Erreur inconnue'));
         }
     }
 } else {
@@ -207,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageHtml .= "👤 - Demandeur : " . $_SESSION['prenom'] . " " . $_SESSION['nom'] . "<br>";
                 $messageHtml .= "📦 - Matériel : " . $materiel['nom'] . "<br>";
                 $messageHtml .= "🏷️ - Type : " . $materiel['type'] . "<br>";
-                $messageHtml .= "�� - Quantité : " . $quantite . "<br>";
+                $messageHtml .= "🔢 - Quantité : " . $quantite . "<br>";
                 $messageHtml .= "Veuillez vous connecter au système pour traiter cette demande.<br><br>";
                 $messageHtml .= "Cordialement,<br>";
                 
@@ -364,5 +374,76 @@ unset($_SESSION['message']);
             }
         });
     </script>
+
+    <?php
+    // Section de débogage - à supprimer après dépannage
+    if (isset($_GET['debug']) && $_GET['debug'] == 'true') {
+        echo '<div class="container mt-5 border border-danger p-3 bg-light">';
+        echo '<h3 class="text-danger">Débogage Email</h3>';
+        
+        // Vérification cURL
+        echo '<h4>Vérification cURL</h4>';
+        echo 'cURL installé: ' . (function_exists('curl_version') ? 'Oui' : 'Non') . '<br>';
+        if (function_exists('curl_version')) {
+            $curl_version = curl_version();
+            echo 'Version cURL: ' . $curl_version['version'] . '<br>';
+            echo 'SSL Version: ' . $curl_version['ssl_version'] . '<br>';
+        }
+        
+        // État du serveur Resend
+        echo '<h4>Test de connexion à l\'API Resend</h4>';
+        $ch = curl_init('https://api.resend.com/api/health');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        echo 'Code réponse: ' . $httpCode . '<br>';
+        echo 'Réponse: ' . htmlspecialchars($result) . '<br>';
+        
+        // Vérification de l'utilisateur et de son email
+        echo '<h4>Vérification Email Utilisateur</h4>';
+        $stmt = $pdo->prepare("
+            SELECT e.email, u.nom, u.prenom 
+            FROM utilisateur u
+            LEFT JOIN email_autorise e ON u.id_email = e.id_email
+            WHERE u.id_utilisateur = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user_debug = $stmt->fetch();
+        
+        echo 'ID Utilisateur: ' . $_SESSION['user_id'] . '<br>';
+        echo 'Nom: ' . htmlspecialchars($user_debug['nom'] ?? 'Non défini') . '<br>';
+        echo 'Prénom: ' . htmlspecialchars($user_debug['prenom'] ?? 'Non défini') . '<br>';
+        echo 'Email: ' . htmlspecialchars($user_debug['email'] ?? 'NON DÉFINI - PROBLÈME') . '<br>';
+        
+        if (empty($user_debug['email'])) {
+            echo '<div class="alert alert-danger">L\'utilisateur n\'a pas d\'email associé!</div>';
+        }
+        
+        // Test d'envoi d'email
+        if (isset($_POST['test_email']) && !empty($user_debug['email'])) {
+            echo '<h4>Résultat du test d\'envoi</h4>';
+            $message_test = "Ceci est un email de test pour vérifier que le système d'envoi fonctionne correctement.<br><br>";
+            $message_test .= "Si vous recevez cet email, c'est que tout fonctionne comme prévu.<br><br>";
+            $message_test .= "Date/heure: " . date('Y-m-d H:i:s');
+            
+            $test_result = $emailService->sendEmail(
+                $user_debug['email'],
+                'Test du système d\'emails',
+                $message_test
+            );
+            
+            echo '<pre>' . print_r($test_result, true) . '</pre>';
+        }
+        
+        // Formulaire de test
+        echo '<form method="post" action="materiel_details.php?id=' . $id . '&debug=true">';
+        echo '<input type="hidden" name="test_email" value="1">';
+        echo '<button type="submit" class="btn btn-warning mt-3">Tester l\'envoi d\'email</button>';
+        echo '</form>';
+        
+        echo '</div>';
+    }
+    ?>
 </body>
 </html>

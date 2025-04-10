@@ -199,198 +199,203 @@ if (empty($errors)) {
     
     <!-- Ajout des styles CSS directement dans le head -->
     <style>
-        /* Profile page styles */
-        .profile-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.8) inset,
-                0 0 100px rgba(255, 255, 255, 0.2) inset;
-            backdrop-filter: blur(20px);
-            overflow: hidden;
-            position: relative;
-            animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        body{
+body {
+    margin-bottom: 10px;
+}
 
-        /* Profile container border effect */
-        .profile-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                #4a90e2,
-                #63b3ed,
-                #4a90e2);
-            background-size: 200% 100%;
-            animation: gradientMove 6s ease-in-out infinite;
-        }
+/* Profile page styles */
+.profile-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 15px;
+    padding-bottom: 30px; /* Augmentation du padding inférieur */
+    margin-bottom: 100px; /* Ajout d'une marge en bas */
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+        0 0 100px rgba(255, 255, 255, 0.2) inset;
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    position: relative;
+    animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-        /* Profile photo styles */
-        .photo-container {
-            width: 120px;
-            height: 120px;
-            border: 4px solid #fff;
-            border-radius: 50%;
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.15),
-                0 0 0 2px rgba(255, 255, 255, 0.9) inset;
-            overflow: hidden;
-            position: relative;
-            cursor: zoom-in;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+/* Profile container border effect */
+.profile-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        #4a90e2,
+        #63b3ed,
+        #4a90e2);
+    background-size: 200% 100%;
+    animation: gradientMove 6s ease-in-out infinite;
+}
 
-        .photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+/* Profile photo styles */
+.photo-container {
+    width: 120px;
+    height: 120px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.15),
+        0 0 0 2px rgba(255, 255, 255, 0.9) inset;
+    overflow: hidden;
+    position: relative;
+    cursor: zoom-in;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-        /* Zoom Icon */
-        .zoom-icon {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(165deg,
-                rgba(74, 144, 226, 0.2) 0%,
-                rgba(0, 0, 0, 0.6) 100%
-            );
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
+.photo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-        .zoom-icon i {
-            color: white;
-            font-size: 24px;
-            transform: scale(0.7);
-            opacity: 0;
-            transition: all 0.3s ease;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+/* Zoom Icon */
+.zoom-icon {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(165deg,
+        rgba(74, 144, 226, 0.2) 0%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
 
-        /* Hover Effects */
-        .photo-container:hover {
-            transform: scale(1.05);
-            box-shadow: 
-                0 18px 35px rgba(0, 0, 0, 0.2),
-                0 0 0 2px var(--primary-color, #4a90e2) inset;
-        }
+.zoom-icon i {
+    color: white;
+    font-size: 24px;
+    transform: scale(0.7);
+    opacity: 0;
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 
-        .photo-container:hover img {
-            transform: scale(1.15);
-        }
+/* Hover Effects */
+.photo-container:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 18px 35px rgba(0, 0, 0, 0.2),
+        0 0 0 2px var(--primary-color, #4a90e2) inset;
+}
 
-        .photo-container:hover .zoom-icon {
-            opacity: 1;
-        }
+.photo-container:hover img {
+    transform: scale(1.15);
+}
 
-        .photo-container:hover .zoom-icon i {
-            transform: scale(1);
-            opacity: 1;
-        }
+.photo-container:hover .zoom-icon {
+    opacity: 1;
+}
 
-        /* Remove old hover styles */
-        .photo-container::after,
-        .photo-container:hover::after {
-            display: none;
-        }
+.photo-container:hover .zoom-icon i {
+    transform: scale(1);
+    opacity: 1;
+}
 
-        /* Profile header styles */
-        .profile-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 30px;
-            padding: 20px;
-            flex-wrap: wrap;
-        }
+/* Remove old hover styles */
+.photo-container::after,
+.photo-container:hover::after {
+    display: none;
+}
 
-        .profile-info {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex: 1;
-            min-width: 250px;
-        }
+/* Profile header styles */
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
 
-        .profile-info h2 {
-            font-size: 28px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            word-wrap: break-word;
-            max-width: 100%;
-            overflow-wrap: break-word;
-        }
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    min-width: 250px;
+}
 
-        /* User info styles */
-        .user-header {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+.profile-info h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
 
-        .user-info-line {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
+/* User info styles */
+.user-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-        .user-role, .user-email, .user-since {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            color: #4a5568;
-        }
+.user-info-line {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
 
-        .user-role i, .user-email i, .user-since i {
-            color: #4a90e2;
-        }
+.user-role, .user-email, .user-since {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: #4a5568;
+}
 
-        /* Edit form styles */
-        .edit-form {
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
-            padding: 20px;
-            border-radius: 25px;
-            margin: 15px;
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.05),
-                0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-            position: relative;
-        }
+.user-role i, .user-email i, .user-since i {
+    color: #4a90e2;
+}
 
-        .edit-form h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-weight: 600;
-            font-size: 20px;
-        }
+/* Edit form styles */
+.edit-form {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+    padding: 20px;
+    border-radius: 25px;
+    margin: 15px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+    position: relative;
+}
 
-        /* Form controls */
-        .form-group {
-            margin-bottom: 12px;
-        }
+.edit-form h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 20px;
+}
 
-        .form-group label {
-            font-weight: 500;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
+/* Form controls */
+.form-group {
+    margin-bottom: 12px;
+}
 
-        
+.form-group label {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
 
-        /* Logout button */
+/* Logout button */
 .logout-container {
     position: fixed;
     bottom: 30px;
@@ -687,6 +692,7 @@ input:focus, select:focus, textarea:focus {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+<br><br><br>
 <body>
     <?php include '../../includes/navbar.php'; ?>
 
@@ -788,20 +794,41 @@ input:focus, select:focus, textarea:focus {
                 
                 <div class="form-group mt-3">
                     <h5 for="current_password">Mot de passe actuel</h5>
-                    <input type="password" class="form-control" id="current_password" name="current_password">
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="current_password" name="current_password">
+                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="current_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="row g-3 mt-1">
                     <div class="col-md-6">  
                         <div class="form-group">
                             <h5 for="new_password">Nouveau mot de passe</h5>
-                            <input type="password" class="form-control" id="new_password" name="new_password">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="new_password" name="new_password">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="new_password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted mt-1">
+                                Le mot de passe doit contenir au moins 8 caractères.
+                            </small>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <h5 for="confirm_password">Confirmer le nouveau mot de passe</h5>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirm_password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" id="password-match-feedback">
+                                Les mots de passe ne correspondent pas.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -940,6 +967,68 @@ input:focus, select:focus, textarea:focus {
         // Script supplémentaire pour la validation par modal du mot de passe
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
+            const newPasswordInput = document.getElementById('new_password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            const passwordMatchFeedback = document.getElementById('password-match-feedback');
+            const passwordValidationMessage = document.getElementById('passwordValidationMessage');
+            
+            // Fonctionnalité pour masquer/démasquer les mots de passe
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const passwordInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    // Basculer le type de l'input
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+            
+            // Vérification en temps réel de la correspondance des mots de passe
+            function checkPasswordMatch() {
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword === '') {
+                    // Champ vide, pas de style
+                    confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
+                    passwordMatchFeedback.style.display = 'none';
+                    return;
+                }
+                
+                if (newPassword === confirmPassword) {
+                    // Les mots de passe correspondent
+                    confirmPasswordInput.classList.remove('is-invalid');
+                    confirmPasswordInput.classList.add('is-valid');
+                    passwordMatchFeedback.style.display = 'none';
+                } else {
+                    // Les mots de passe ne correspondent pas
+                    confirmPasswordInput.classList.remove('is-valid');
+                    confirmPasswordInput.classList.add('is-invalid');
+                    passwordMatchFeedback.style.display = 'block';
+                }
+            }
+            
+            // Événements pour détecter les changements dans les champs de mot de passe
+            newPasswordInput.addEventListener('input', checkPasswordMatch);
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            // Fonction pour afficher les messages de validation dans la modal
+            function showPasswordValidationModal(message) {
+                if (passwordValidationMessage) {
+                    passwordValidationMessage.textContent = message;
+                    const passwordValidationModal = new bootstrap.Modal(document.getElementById('passwordValidationModal'));
+                    passwordValidationModal.show();
+                }
+            }
             
             if (form) {
                 form.addEventListener('submit', function(e) {
@@ -954,20 +1043,29 @@ input:focus, select:focus, textarea:focus {
                         if (newPassword.length < 8) {
                             e.preventDefault(); // Empêcher la soumission du formulaire
                             
+                            // Ajout d'une classe d'erreur visuelle
+                            newPasswordInput.classList.add('is-invalid');
+                            
                             // Afficher la modal pour mot de passe trop court
-                            const passwordValidationModal = new bootstrap.Modal(document.getElementById('passwordValidationModal'));
-                            passwordValidationModal.show();
+                            showPasswordValidationModal("Le nouveau mot de passe doit contenir au moins 8 caractères.");
                             return false;
+                        } else {
+                            newPasswordInput.classList.remove('is-invalid');
                         }
                         
                         // Vérification que les mots de passe correspondent
                         if (newPassword !== confirmPassword) {
                             e.preventDefault(); // Empêcher la soumission du formulaire
                             
+                            // Ajout d'une classe d'erreur visuelle
+                            confirmPasswordInput.classList.add('is-invalid');
+                            passwordMatchFeedback.style.display = 'block';
+                            
                             // Afficher la modal pour mots de passe qui ne correspondent pas
-                            const passwordMismatchModal = new bootstrap.Modal(document.getElementById('passwordMismatchModal'));
-                            passwordMismatchModal.show();
+                            showPasswordValidationModal("Les nouveaux mots de passe ne correspondent pas.");
                             return false;
+                        } else {
+                            confirmPasswordInput.classList.remove('is-invalid');
                         }
                     }
                     
@@ -977,5 +1075,6 @@ input:focus, select:focus, textarea:focus {
             }
         });
     </script>
+     <?php include '../../includes/footer.php'; ?>
 </body>
 </html>

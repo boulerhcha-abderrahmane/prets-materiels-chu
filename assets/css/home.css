@@ -161,6 +161,15 @@ body {
 .search-bar {
     max-width: 600px;
     margin: 2rem auto;
+.search-bar {
+    max-width: 600px;
+    margin: 2rem auto;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--border-radius-lg);
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 }
 
 .search-bar input {
@@ -172,6 +181,7 @@ body {
     transition: var(--transition-base);
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.91);
 }
+
 
 .search-bar input:focus {
     outline: none;

@@ -18,7 +18,7 @@ body {
     width: 95%;
     max-width: 1600px;
     z-index: 1030;
-    background: linear-gradient(135deg, rgb(34, 87, 221), rgb(23, 133, 207));
+    background: linear-gradient(135deg, rgb(10, 66, 104), rgb(17, 100, 155));
     padding: 0.8rem 0;
     border-radius: 15px;
     box-shadow: 0 2px 10px rgba(44, 62, 80, 0.1);
