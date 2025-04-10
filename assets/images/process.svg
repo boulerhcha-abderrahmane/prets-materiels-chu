@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="700" viewBox="0 0 600 700">
+  <!-- Accessibilité améliorée -->
+  <title>Processus de gestion des prêts de matériels</title>
+  <desc>Illustration représentant le processus de demande, approbation et attribution des équipements</desc>
+  
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f9fafc" />
+      <stop offset="100%" stop-color="#eef2f7" />
+    </linearGradient>
+    <linearGradient id="device-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f8f9fa" />
+    </linearGradient>
+    <linearGradient id="primary-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a4f8b" />
+      <stop offset="100%" stop-color="#2d7dd2" />
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2ecc71" />
+      <stop offset="100%" stop-color="#45b17f" />
+    </linearGradient>
+    <linearGradient id="accent2-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f39c12" />
+      <stop offset="100%" stop-color="#f1c40f" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+      <feOffset dx="0" dy="5" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <!-- Animation pour éléments interactifs -->
+    <animate id="pulse" attributeName="opacity" values="1;0.7;1" dur="2s" repeatCount="indefinite" />
+  </defs>
+  
+  <!-- Background avec pattern subtil -->
+  <rect width="600" height="700" fill="url(#bg-gradient)" rx="20" ry="20" />
+  <pattern id="dotPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="1" fill="#2d7dd2" opacity="0.1" />
+  </pattern>
+  <rect width="600" height="700" fill="url(#dotPattern)" rx="20" ry="20" opacity="0.5" />
+  
+  <!-- Stylized Device -->
+  <rect x="100" y="100" width="400" height="250" rx="15" ry="15" fill="url(#device-gradient)" stroke="#2d7dd2" stroke-width="2" filter="url(#shadow)" />
+  <rect x="120" y="120" width="360" height="180" fill="#ecf0f1" rx="5" ry="5" />
+  <rect x="170" y="350" width="260" height="20" fill="url(#primary-gradient)" rx="5" ry="5" filter="url(#shadow)" />
+  <rect x="240" y="370" width="120" height="25" fill="url(#primary-gradient)" rx="5" ry="5" filter="url(#shadow)" />
+  
+  <!-- Titre de section -->
+  <text x="300" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Interface de demande</text>
+
+  <!-- UI Elements améliorés -->
+  <rect x="150" y="140" width="120" height="20" rx="5" ry="5" fill="url(#primary-gradient)" />
+  <text x="210" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#ffffff">Demande de prêt</text>
+  
+  <rect x="150" y="170" width="180" height="15" rx="3" ry="3" fill="#bdc3c7" />
+  <text x="170" y="181" font-family="Arial, sans-serif" font-size="10" fill="#34495e">Type d'équipement</text>
+  
+  <rect x="150" y="195" width="150" height="15" rx="3" ry="3" fill="#bdc3c7" />
+  <text x="170" y="206" font-family="Arial, sans-serif" font-size="10" fill="#34495e">Date de prêt</text>
+  
+  <rect x="150" y="220" width="80" height="30" rx="5" ry="5" fill="url(#accent-gradient)">
+    <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" />
+  </rect>
+  <text x="170" y="242" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">OK</text>
+  
+  <!-- Cercle de validation avec symbole + et texte -->
+  <circle cx="400" cy="170" r="40" fill="url(#accent2-gradient)" filter="url(#shadow)">
+    <animate attributeName="r" values="40;42;40" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="400" cy="170" r="28" fill="none" stroke="#ffffff" stroke-width="3" />
+  <line x1="385" y1="170" x2="415" y2="170" stroke="#ffffff" stroke-width="3" />
+  <line x1="400" y1="155" x2="400" y2="185" stroke="#ffffff" stroke-width="3" />
+   <text x="170" y="206" font-family="Arial, sans-serif" font-size="10" fill="#34495e">Date de prêt</text>
+  
+  <rect x="365" y="220" width="70" height="10" rx="2" ry="2" fill="#bdc3c7" />
+  <rect x="365" y="240" width="70" height="10" rx="2" ry="2" fill="#bdc3c7" />
+
+  <!-- Badge de statut (position corrigée) -->
+  <circle cx="185" cy="125" r="10" fill="url(#accent-gradient)" filter="url(#shadow)" />
+  <text x="180" y="129" font-family="Arial" font-size="14" fill="#ffffff">✓</text>
+  <text x="200" y="129" font-family="Arial, sans-serif" font-size="12" fill="#34495e">Disponible</text>
+
+  <!-- Annotation explicative -->
+  <text x="300" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#34495e">Traitement de la demande</text>
+
+  <!-- Connecting Lines avec flèche -->
+  <line x1="300" y1="400" x2="300" y2="440" stroke="#95a5a6" stroke-width="3" stroke-dasharray="5,5">
+    <animate attributeName="stroke-dashoffset" from="0" to="20" dur="1s" repeatCount="indefinite" />
+  </line>
+  <polygon points="300,450 295,440 305,440" fill="#95a5a6" />
+  
+  <!-- Titre de section -->
+  <text x="300" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Équipements disponibles</text>
+  
+  <!-- Devices illustration améliorée -->
+  <rect x="150" y="450" width="300" height="180" rx="10" ry="10" fill="url(#device-gradient)" stroke="#2c3e50" stroke-width="2" filter="url(#shadow)" />
+  
+  <!-- Equipment avec plus de détails -->
+  <!-- Appareil photo -->
+  <circle cx="225" cy="520" r="30" fill="url(#primary-gradient)" filter="url(#shadow)" />
+  <rect x="205" y="510" width="40" height="25" rx="5" ry="5" fill="#34495e" />
+  <circle cx="225" cy="522" r="10" fill="#2c3e50" stroke="#ecf0f1" stroke-width="2" />
+  <circle cx="225" cy="522" r="5" fill="#34495e" />
+  <rect x="200" y="555" width="50" height="15" fill="#2c3e50" rx="2" ry="2" />
+  <rect x="215" y="570" width="20" height="30" fill="#2c3e50" />
+  <text x="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#34495e" y="620">Appareil photo</text>
+  
+  <!-- Ordinateur portable (repositionné) -->
+  <rect x="290" y="500" width="80" height="50" fill="url(#accent2-gradient)" rx="5" ry="5" filter="url(#shadow)" />
+  <rect x="290" y="500" width="80" height="40" fill="#34495e" rx="5" ry="5" />
+  <rect x="295" y="505" width="70" height="30" fill="#2980b9" rx="2" ry="2" />
+  <rect x="310" y="540" width="40" height="10" fill="#2c3e50" />
+  <rect x="320" y="550" width="20" height="30" fill="#2c3e50" />
+  <text x="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#34495e" y="620">Ordinateur</text>
+  
+  <!-- Projecteur (repositionné) -->
+  <circle cx="405" cy="520" r="25" fill="url(#accent-gradient)" filter="url(#shadow)" />
+  <rect x="395" y="510" width="20" height="15" fill="#34495e" rx="2" ry="2" /> 
+  <ellipse cx="405" cy="525" rx="15" ry="5" fill="#34495e" />
+  <rect x="385" y="545" width="40" height="10" fill="#2c3e50" />
+  <rect x="395" y="555" width="20" height="30" fill="#2c3e50" />
+  <text x="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#34495e" y="620">Projecteur</text>
+
+  <!-- Timeline points -->
+  <circle cx="100" cy="350" r="10" fill="url(#primary-gradient)" />
+  <text x="85" y="354" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#34495e">1. Demande</text>
+  
+  <circle cx="100" cy="450" r="10" fill="url(#primary-gradient)" />
+  <text x="85" y="454" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#34495e">2. Traitement</text>
+  
+  <circle cx="100" cy="550" r="10" fill="url(#primary-gradient)" />
+  <text x="85" y="554" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#34495e">3. Attribution</text>
+  
+  <line x1="100" y1="360" x2="100" y2="440" stroke="#95a5a6" stroke-width="2" />
+  <line x1="100" y1="460" x2="100" y2="540" stroke="#95a5a6" stroke-width="2" />
+  
+  <!-- Légende en bas -->
+  <rect x="150" y="650" width="300" height="30" rx="5" ry="5" fill="url(#primary-gradient)" opacity="0.8" />
+  <text x="300" y="670" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff">Système de gestion des prêts de matériel</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="50" cy="50" r="30" fill="url(#primary-gradient)" opacity="0.1" />
+  <circle cx="550" cy="650" r="40" fill="url(#accent-gradient)" opacity="0.1" />
+  <circle cx="100" cy="600" r="25" fill="url(#accent2-gradient)" opacity="0.1" />
+  <circle cx="500" cy="100" r="20" fill="url(#primary-gradient)" opacity="0.1" />
+</svg>

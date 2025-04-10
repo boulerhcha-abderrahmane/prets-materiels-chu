@@ -59,8 +59,11 @@ $loginMessage = processLogin($pdo);
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
+       
+
+       
         body {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg,rgb(15, 83, 139), #3498db);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -78,12 +81,6 @@ $loginMessage = processLogin($pdo);
             border: none;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 2.5rem !important;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
         }
 
         .logo-chu {
@@ -115,14 +112,6 @@ $loginMessage = processLogin($pdo);
             border-radius: 16px;
             padding: 14px 28px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(41, 128, 185, 0.4);
         }
 
         .toggle-form {

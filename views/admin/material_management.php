@@ -410,16 +410,635 @@ $existingPhotos = glob("uploads/*.{jpg,jpeg,png,gif}", GLOB_BRACE); // Récupér
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --text-color: #2c3e50;
+            --text-light: #7f8c8d;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            background: #f8f9fa;
-            color: #2c3e50;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
         .main-content {
-            padding: 30px;
+            padding: 2rem;
+            margin-left: 250px;
+        }
+
+        /* Header Styles */
+        h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border: none;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            border: none;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Table Styles */
+        .table {
+            background: var(--background-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border: none;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+
+        /* Form Styles */
+        .form-control {
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert-success {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--accent-color);
+        }
+
+        .alert-danger {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Custom Checkbox/Radio Styles */
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Search Bar Styles */
+        .input-group {
+            box-shadow: var(--shadow-sm);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        #searchInput {
+            border: none;
+            padding: 1rem;
+        }
+
+        #clearSearch {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+        }
+
+        /* Image Styles */
+        .card img {
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            transition: var(--transition);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .table th, .table td {
+                padding: 0.75rem;
+            }
+
+            .modal-dialog {
+                max-width: 90%;
+                margin: 1.75rem auto;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .table {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .form-control {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .row {
+                margin-right: -5px;
+                margin-left: -5px;
+            }
+
+            .col, [class*="col-"] {
+                padding-right: 5px;
+                padding-left: 5px;
+            }
+
+            .table-responsive {
+                margin: 0 -15px;
+                padding: 0 15px;
+                border: none;
+            }
+
+            .modal-header {
+                padding: 1rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
+
+            .modal-footer {
+                padding: 1rem;
+            }
+
+            .btn-group-sm > .btn, .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.76rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group .form-control {
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
+            }
+
+            .input-group-append {
+                margin-left: 0;
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+
+            .input-group-append .btn {
+                width: 100%;
+                border-radius: var(--border-radius);
+            }
+
+            .card-img-top {
+                height: 150px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .table {
+                font-size: 0.8rem;
+            }
+
+            .table td, .table th {
+                padding: 0.5rem;
+            }
+
+            .modal-content {
+                border-radius: 0;
+            }
+
+            .modal-dialog {
+                margin: 0;
+                max-width: 100%;
+                height: 100%;
+            }
+
+            .modal-dialog-centered {
+                min-height: 100%;
+            }
+
+            .modal-content {
+                min-height: 100vh;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            td .btn {
+                width: auto;
+                margin-bottom: 0;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .alert {
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .form-group {
+                margin-bottom: 0.75rem;
+            }
+
+            .custom-control {
+                min-height: 1.3rem;
+                padding-left: 1.3rem;
+            }
+
+            .custom-control-label {
+                font-size: 0.9rem;
+            }
+
+            .custom-control-label::before,
+            .custom-control-label::after {
+                width: 1rem;
+                height: 1rem;
+            }
+
+            .col-md-4.mb-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* Améliorations pour les modals sur mobile */
+        @media (max-height: 700px) {
+            .modal-body {
+                max-height: calc(100vh - 200px);
+                overflow-y: auto;
+            }
+        }
+
+        /* Optimisations pour les petits écrans en mode paysage */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .modal-body {
+                max-height: calc(100vh - 120px);
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                padding: 0.75rem;
+            }
+
+            .modal-footer {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Améliorations pour l'accessibilité tactile */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, 
+            .form-control,
+            .custom-control-label,
+            .close {
+                min-height: 44px;
+                line-height: 44px;
+            }
+
+            .custom-control-label::before,
+            .custom-control-label::after {
+                top: 12px;
+            }
+
+            .table td {
+                padding: 12px 8px;
+            }
+        }
+
+        /* Optimisations pour les écrans haute densité */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .card img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* Styles pour les photos dans les modals */
+        .photo-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        .photo-card {
+            background: var(--background-white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .photo-preview {
+            position: relative;
+            padding-top: 75%; /* Ratio 4:3 */
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .photo-preview img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-preview img:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-info {
+            padding: 1rem;
+            background: white;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .photo-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .rename-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rename-input {
+            flex: 1;
+            min-height: 36px;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.5rem;
+            }
+
+            .photo-preview {
+                padding-top: 100%; /* Ratio 1:1 sur mobile */
+            }
+
+            .photo-info {
+                padding: 0.75rem;
+            }
+
+            .photo-name {
+                font-size: 0.8rem;
+            }
+
+            .rename-form {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .rename-input {
+                min-height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .modal-dialog.modal-lg {
+                max-width: 95%;
+                margin: 0.5rem auto;
+            }
+
+            .photo-actions .btn {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .custom-control-label {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .modal-dialog.modal-lg {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .modal-content {
+                border-radius: 0;
+            }
+
+            .photo-preview {
+                padding-top: 100%; /* Maintenir le ratio 1:1 */
+            }
+
+            .photo-info {
+                padding: 0.5rem;
+            }
+
+            .photo-name {
+                font-size: 0.75rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .rename-input {
+                min-height: 30px;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .photo-actions .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+        }
+
+        /* Optimisations pour le mode paysage sur mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .modal-body {
+                max-height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .photo-preview {
+                padding-top: 75%; /* Retour au ratio 4:3 en paysage */
+            }
         }
     </style>
 </head>
@@ -518,35 +1137,31 @@ $existingPhotos = glob("uploads/*.{jpg,jpeg,png,gif}", GLOB_BRACE); // Récupér
                                     </div>
                                 </div>
                                 
-                                <div class="row">
+                                <div class="photo-grid">
                                     <?php foreach ($existingPhotos as $photo): ?>
-                                    <div class="col-md-4 mb-3">
-                                        <div class="card">
-                                            <img src="<?php echo $photo; ?>" class="card-img-top" alt="Photo" style="height: 200px; object-fit: cover;">
-                                            <div class="card-body text-center">
-                                                <p class="mb-1">Nom actuel : <?php echo pathinfo($photo, PATHINFO_FILENAME); ?></p>
-                                                <form method="POST" class="mb-2">
+                                    <div class="photo-card">
+                                        <div class="photo-preview">
+                                            <img src="<?php echo $photo; ?>" alt="Photo" loading="lazy">
+                                        </div>
+                                        <div class="photo-info">
+                                            <div class="photo-name"><?php echo pathinfo($photo, PATHINFO_FILENAME); ?></div>
+                                            <div class="photo-actions">
+                                                <form method="POST" class="rename-form">
                                                     <input type="hidden" name="old_path" value="<?php echo $photo; ?>">
-                                                    <div class="input-group input-group-sm">
-                                                        <?php $newNameId = "new_name_" . md5($photo); ?>
-                                                        <label for="<?php echo $newNameId; ?>" class="sr-only">Nouveau nom pour <?php echo basename($photo); ?></label>
-                                                        <input type="text" 
-                                                               class="form-control" 
-                                                               id="<?php echo $newNameId; ?>"
-                                                               name="new_name" 
-                                                               placeholder="Nouveau nom"
-                                                               value="<?php echo pathinfo($photo, PATHINFO_FILENAME); ?>">
-                                                                
-                                                        <div class="input-group-append">
-                                                            <button type="submit" 
-                                                                    id="rename_btn_<?php echo md5($photo); ?>"
-                                                                    name="rename_photo" 
-                                                                    class="btn btn-outline-secondary btn-sm"
-                                                                    aria-label="Renommer la photo">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                                    <?php $newNameId = "new_name_" . md5($photo); ?>
+                                                    <input type="text" 
+                                                           class="rename-input" 
+                                                           id="<?php echo $newNameId; ?>"
+                                                           name="new_name" 
+                                                           placeholder="Nouveau nom"
+                                                           value="<?php echo pathinfo($photo, PATHINFO_FILENAME); ?>"
+                                                           aria-label="Nouveau nom pour <?php echo basename($photo); ?>">
+                                                    <button type="submit" 
+                                                            name="rename_photo" 
+                                                            class="btn btn-outline-secondary btn-sm"
+                                                            aria-label="Renommer la photo">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
                                                 </form>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" 
@@ -554,7 +1169,9 @@ $existingPhotos = glob("uploads/*.{jpg,jpeg,png,gif}", GLOB_BRACE); // Récupér
                                                            id="photo_<?php echo md5($photo); ?>" 
                                                            name="selected_photos[]" 
                                                            value="<?php echo $photo; ?>">
-                                                    <label class="custom-control-label" for="photo_<?php echo md5($photo); ?>">Sélectionner</label>
+                                                    <label class="custom-control-label" for="photo_<?php echo md5($photo); ?>">
+                                                        Sélectionner cette photo
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
