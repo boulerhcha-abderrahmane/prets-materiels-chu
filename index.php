@@ -665,6 +665,158 @@
             color: var(--text-color);
             font-size: 1.1rem;
         }
+        
+        /* Nouveaux styles pour améliorer l'élégance */
+        .dot-separator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .dot-separator::before,
+        .dot-separator::after {
+            content: '';
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
+        }
+        
+        .dot-separator::before {
+            margin-right: 1rem;
+        }
+        
+        .dot-separator::after {
+            margin-left: 1rem;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            margin: 0 3px;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot-1 {
+            animation-delay: 0s;
+        }
+        
+        .dot-2 {
+            animation-delay: 0.3s;
+        }
+        
+        .dot-3 {
+            animation-delay: 0.6s;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+        }
+        
+        .icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        /* Effet de particules en arrière-plan */
+        .bg-shapes {
+            position: relative;
+        }
+        
+        .bg-shapes::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.03) 0%, transparent 30%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Effet de décoration pour le header */
+        .deco-1, .deco-2, .deco-3 {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        
+        .deco-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+        }
+        
+        .deco-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, transparent 70%);
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        .deco-3 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(243, 156, 18, 0.2) 0%, transparent 70%);
+            top: 50%;
+            right: 10%;
+        }
+        
+        /* Effet de survol pour les cartes de fonctionnalités */
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(46, 204, 113, 0.05));
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+        
+        /* Effet de survol pour les étapes */
+        .step-container:hover .step-number {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* Effet de survol pour les éléments de contact */
+        .contact-item:hover p {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body class="bg-shapes no-spacing">
