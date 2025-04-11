@@ -606,6 +606,124 @@
             position: relative;
             overflow: hidden;
         }
+        
+        /* Styles pour la section À propos */
+        .about-section {
+            background-color: var(--background-white);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .about-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .about-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .about-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .about-content h3::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: var(--gradient-primary);
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        .about-content p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .about-feature {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .about-feature:hover {
+            transform: translateX(5px);
+            color: var(--primary-color);
+        }
+        
+        .about-image {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: var(--transition);
+        }
+        
+        .about-image:hover {
+            transform: perspective(1000px) rotateY(0);
+        }
+        
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+            z-index: 1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .about-image:hover::before {
+            opacity: 1;
+        }
+        
+        @media (max-width: 992px) {
+            .about-image {
+                margin-top: 2rem;
+                transform: perspective(1000px) rotateY(0);
+            }
+        }
 
         .contact-card::before {
             content: '';
@@ -829,6 +947,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="#about">À propos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#features">Fonctionnalités</a></li>
                     <li class="nav-item"><a class="nav-link" href="#how-it-works">Processus</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
@@ -876,6 +995,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Section À propos -->
+    <section class="section about-section" id="about">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">À propos de PrêtsMatériels</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Une plateforme innovante pour optimiser la gestion de vos équipements techniques.</p>
+            
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
+                    <div class="about-content">
+                        <h3 class="mb-4">Notre Mission</h3>
+                        <p>PrêtsMatériels est né de la volonté d'optimiser la gestion des équipements techniques au sein des entreprises d'ingénierie et des services techniques. Notre plateforme permet de suivre avec précision le cycle de prêt du matériel, réduisant ainsi les coûts liés aux pertes et optimisant l'utilisation des ressources.</p>
+                        
+                        <div class="about-features mt-4">
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                <span>Gestion centralisée des ressources matérielles</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                <span>Suivi précis des prêts et retours</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                <span>Optimisation de l'utilisation des équipements</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                <span>Réduction des pertes et des coûts associés</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
+                    <div class="about-image">
+                        <img src="assets/images/about.svg" alt="À propos de PrêtsMatériels" onerror="this.src='https://via.placeholder.com/600x400?text=Notre+Solution'" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Section Fonctionnalités -->
     <section class="section features-section" id="features">
