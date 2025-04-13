@@ -27,23 +27,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             throw new Exception("Cet email est déjà utilisé");
                         }
 
-                        // Vérifier l'email avec l'API Abstract
-                        $apiKey = '8c1590ee99ec415e8fa34947c4da7378';
-                        $email = urlencode($_POST['email']);
-                        $url = "https://emailvalidation.abstractapi.com/v1/?api_key={$apiKey}&email={$email}";
-                        
-                        $response = file_get_contents($url);
-                        $result = json_decode($response, true);
+                        // Vérification de base du format de l'email
+                        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                            throw new Exception("Format d'email invalide");
+                        }
 
-                        // Vérification plus détaillée de l'email
-                        if ($result['deliverability'] !== "DELIVERABLE") {
-                            throw new Exception("Cette adresse email n'existe pas ou ne peut pas recevoir d'emails");
-                        }
-                        if ($result['is_disposable_email']['value'] === true) {
-                            throw new Exception("Les adresses email temporaires ne sont pas autorisées");
-                        }
-                        if ($result['is_free_email']['value'] === false && $result['is_corporate_email']['value'] === false) {
-                            throw new Exception("Cette adresse email semble invalide");
+                        // Essayer de vérifier l'email avec l'API Abstract (optionnel)
+                        try {
+                            $apiKey = '8c1590ee99ec415e8fa34947c4da7378';
+                            $email = urlencode($_POST['email']);
+                            $url = "https://emailvalidation.abstractapi.com/v1/?api_key={$apiKey}&email={$email}";
+                            
+                            $response = @file_get_contents($url);
+                            if ($response !== false) {
+                                $result = json_decode($response, true);
+
+                                // Vérification seulement si l'API a répondu correctement
+                                if (isset($result['deliverability']) && $result['deliverability'] !== "DELIVERABLE") {
+                                    // Log mais ne bloque pas l'enregistrement
+                                    error_log("Avertissement: Email potentiellement non délivrable: " . $_POST['email']);
+                                }
+                                if (isset($result['is_disposable_email']['value']) && $result['is_disposable_email']['value'] === true) {
+                                    throw new Exception("Les adresses email temporaires ne sont pas autorisées");
+                                }
+                            }
+                        } catch (Exception $e) {
+                            // Log l'erreur mais continue le processus
+                            error_log("Erreur lors de la vérification d'email: " . $e->getMessage());
                         }
 
                         // Insérer le nouvel administrateur
@@ -91,23 +101,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             throw new Exception("Cet email est déjà utilisé par un autre administrateur");
                         }
                         
-                        // Vérifier le nouvel email avec l'API Abstract
-                        $apiKey = '8c1590ee99ec415e8fa34947c4da7378';
-                        $email = urlencode($_POST['new_email']);
-                        $url = "https://emailvalidation.abstractapi.com/v1/?api_key={$apiKey}&email={$email}";
-                        
-                        $response = file_get_contents($url);
-                        $result = json_decode($response, true);
+                        // Vérification de base du format de l'email
+                        if (!filter_var($_POST['new_email'], FILTER_VALIDATE_EMAIL)) {
+                            throw new Exception("Format d'email invalide");
+                        }
 
-                        // Vérification plus détaillée de l'email
-                        if ($result['deliverability'] !== "DELIVERABLE") {
-                            throw new Exception("Cette adresse email n'existe pas ou ne peut pas recevoir d'emails");
-                        }
-                        if ($result['is_disposable_email']['value'] === true) {
-                            throw new Exception("Les adresses email temporaires ne sont pas autorisées");
-                        }
-                        if ($result['is_free_email']['value'] === false && $result['is_corporate_email']['value'] === false) {
-                            throw new Exception("Cette adresse email semble invalide");
+                        // Essayer de vérifier le nouvel email avec l'API Abstract (optionnel)
+                        try {
+                            $apiKey = '8c1590ee99ec415e8fa34947c4da7378';
+                            $email = urlencode($_POST['new_email']);
+                            $url = "https://emailvalidation.abstractapi.com/v1/?api_key={$apiKey}&email={$email}";
+                            
+                            $response = @file_get_contents($url);
+                            if ($response !== false) {
+                                $result = json_decode($response, true);
+
+                                // Vérification seulement si l'API a répondu correctement
+                                if (isset($result['deliverability']) && $result['deliverability'] !== "DELIVERABLE") {
+                                    // Log mais ne bloque pas l'enregistrement
+                                    error_log("Avertissement: Email potentiellement non délivrable: " . $_POST['new_email']);
+                                }
+                                if (isset($result['is_disposable_email']['value']) && $result['is_disposable_email']['value'] === true) {
+                                    throw new Exception("Les adresses email temporaires ne sont pas autorisées");
+                                }
+                            }
+                        } catch (Exception $e) {
+                            // Log l'erreur mais continue le processus
+                            error_log("Erreur lors de la vérification d'email: " . $e->getMessage());
                         }
 
                         $sql = "UPDATE administrateur SET 

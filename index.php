@@ -606,124 +606,6 @@
             position: relative;
             overflow: hidden;
         }
-        
-        /* Styles pour la section À propos */
-        .about-section {
-            background-color: var(--background-white);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .about-section::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.05) 0%, transparent 70%);
-            z-index: 0;
-        }
-        
-        .about-section::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            left: -50px;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(46, 204, 113, 0.05) 0%, transparent 70%);
-            z-index: 0;
-        }
-        
-        .about-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .about-content h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .about-content h3::after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 3px;
-            background: var(--gradient-primary);
-            bottom: -10px;
-            left: 0;
-            border-radius: 2px;
-        }
-        
-        .about-content p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-        
-        .about-features {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .about-feature {
-            display: flex;
-            align-items: center;
-            font-size: 1rem;
-            color: var(--text-color);
-            transition: var(--transition);
-        }
-        
-        .about-feature:hover {
-            transform: translateX(5px);
-            color: var(--primary-color);
-        }
-        
-        .about-image {
-            position: relative;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--box-shadow);
-            transform: perspective(1000px) rotateY(-5deg);
-            transition: var(--transition);
-        }
-        
-        .about-image:hover {
-            transform: perspective(1000px) rotateY(0);
-        }
-        
-        .about-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
-            z-index: 1;
-            opacity: 0;
-            transition: var(--transition);
-        }
-        
-        .about-image:hover::before {
-            opacity: 1;
-        }
-        
-        @media (max-width: 992px) {
-            .about-image {
-                margin-top: 2rem;
-                transform: perspective(1000px) rotateY(0);
-            }
-        }
 
         .contact-card::before {
             content: '';
@@ -783,158 +665,6 @@
             color: var(--text-color);
             font-size: 1.1rem;
         }
-        
-        /* Nouveaux styles pour améliorer l'élégance */
-        .dot-separator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 1.5rem 0;
-            position: relative;
-        }
-        
-        .dot-separator::before,
-        .dot-separator::after {
-            content: '';
-            height: 1px;
-            flex: 1;
-            background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
-        }
-        
-        .dot-separator::before {
-            margin-right: 1rem;
-        }
-        
-        .dot-separator::after {
-            margin-left: 1rem;
-        }
-        
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            margin: 0 3px;
-            opacity: 0.7;
-            animation: pulse 2s infinite;
-        }
-        
-        .dot-1 {
-            animation-delay: 0s;
-        }
-        
-        .dot-2 {
-            animation-delay: 0.3s;
-        }
-        
-        .dot-3 {
-            animation-delay: 0.6s;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 0.8;
-            }
-            100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-        }
-        
-        .icon {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .card-body {
-            padding: 2.5rem;
-        }
-        
-        /* Effet de particules en arrière-plan */
-        .bg-shapes {
-            position: relative;
-        }
-        
-        .bg-shapes::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.03) 0%, transparent 30%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        /* Effet de décoration pour le header */
-        .deco-1, .deco-2, .deco-3 {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            z-index: 1;
-        }
-        
-        .deco-1 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%);
-            top: -100px;
-            right: -100px;
-        }
-        
-        .deco-2 {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, transparent 70%);
-            bottom: -50px;
-            left: -50px;
-        }
-        
-        .deco-3 {
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(243, 156, 18, 0.2) 0%, transparent 70%);
-            top: 50%;
-            right: 10%;
-        }
-        
-        /* Effet de survol pour les cartes de fonctionnalités */
-        .feature-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(46, 204, 113, 0.05));
-            z-index: -1;
-            opacity: 0;
-            transition: var(--transition);
-        }
-        
-        .feature-card:hover::after {
-            opacity: 1;
-        }
-        
-        /* Effet de survol pour les étapes */
-        .step-container:hover .step-number {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
-        }
-        
-        /* Effet de survol pour les éléments de contact */
-        .contact-item:hover p {
-            color: var(--accent-color);
-        }
     </style>
 </head>
 <body class="bg-shapes no-spacing">
@@ -947,7 +677,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#about">À propos</a></li>
                     <li class="nav-item"><a class="nav-link" href="#features">Fonctionnalités</a></li>
                     <li class="nav-item"><a class="nav-link" href="#how-it-works">Processus</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
@@ -995,47 +724,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Section À propos -->
-    <section class="section about-section" id="about">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">À propos de PrêtsMatériels</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Une plateforme innovante pour optimiser la gestion de vos équipements techniques.</p>
-            
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
-                    <div class="about-content">
-                        <h3 class="mb-4">Notre Mission</h3>
-                        <p>PrêtsMatériels est né de la volonté d'optimiser la gestion des équipements techniques au sein des entreprises d'ingénierie et des services techniques. Notre plateforme permet de suivre avec précision le cycle de prêt du matériel, réduisant ainsi les coûts liés aux pertes et optimisant l'utilisation des ressources.</p>
-                        
-                        <div class="about-features mt-4">
-                            <div class="about-feature">
-                                <i class="fas fa-check-circle me-2 text-success"></i>
-                                <span>Gestion centralisée des ressources matérielles</span>
-                            </div>
-                            <div class="about-feature">
-                                <i class="fas fa-check-circle me-2 text-success"></i>
-                                <span>Suivi précis des prêts et retours</span>
-                            </div>
-                            <div class="about-feature">
-                                <i class="fas fa-check-circle me-2 text-success"></i>
-                                <span>Optimisation de l'utilisation des équipements</span>
-                            </div>
-                            <div class="about-feature">
-                                <i class="fas fa-check-circle me-2 text-success"></i>
-                                <span>Réduction des pertes et des coûts associés</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
-                    <div class="about-image">
-                        <img src="assets/images/about.svg" alt="À propos de PrêtsMatériels" onerror="this.src='https://via.placeholder.com/600x400?text=Notre+Solution'" class="img-fluid">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Section Fonctionnalités -->
     <section class="section features-section" id="features">
@@ -1097,15 +785,17 @@
                         <div class="step-number">2</div>
                         <div class="step-content">
                             <h3 class="step-title">Sélectionnez votre matériel</h3>
-                            <p class="step-description">Parcourez notre catalogue d'équipements et sélectionnez celui dont vous avez besoin pour votre projet.</p>
+                            <p class="step-description">Parcourez notre catalogue d'équipements et sélectionnez celui dont vous avez besoin .</p>
                         </div>
                     </div>
+                    
+                 
                     
                     <div class="step-container">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h3 class="step-title">Réservez et récupérez</h3>
-                            <p class="step-description">Réservez l'équipement pour la période souhaitée et récupérez-le auprès du service technique.</p>
+                            <h3 class="step-title">Retournez le matériel</h3>
+                            <p class="step-description">Rapportez l'équipement au service technique après la date de retour prévue pour qu'il soit disponible pour les autres utilisateurs.</p>
                         </div>
                     </div>
                 </div>

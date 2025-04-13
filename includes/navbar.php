@@ -91,7 +91,7 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'views') !== false) {
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= $current_page === 'historique_pret.php' ? 'active' : '' ?>" href="historique_pret.php">
-                        <i class="fas fa-history me-1"></i>Historiques
+                        <i class="fas fa-clipboard-list me-1"></i>Suivi de Statut
                     </a>
                 </li>
                 <li class="nav-item">

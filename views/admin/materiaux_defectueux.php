@@ -84,23 +84,48 @@ if (!isset($_SESSION['admin_id'])) {
                                     JOIN demande_pret d ON rp.id_demande = d.id_demande
                                     JOIN materiel m ON d.id_materiel = m.id_materiel
                                     JOIN utilisateur u ON d.id_utilisateur = u.id_utilisateur
-                                    JOIN historique_actions ha ON ha.id_demande = d.id_demande
-                                    JOIN administrateur a ON a.id_admin = ha.id_admin
+                                    LEFT JOIN administrateur a ON a.id_admin = rp.id_admin
                                     WHERE rp.etat_retour = 'défectueux'
                                     ORDER BY rp.date_retour DESC";
 
-                            $stmt = $pdo->query($query);
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>
-                                        <td>" . date('d/m/Y H:i', strtotime($row['date_retour'])) . "</td>
-                                        <td>" . htmlspecialchars($row['nom_materiel']) . "</td>
-                                        <td>" . htmlspecialchars($row['type']) . "</td>
-                                        <td>" . htmlspecialchars($row['quantite']) . "</td>
-                                        <td>" . htmlspecialchars($row['nom_utilisateur'] . ' ' . $row['prenom_utilisateur']) . "</td>
-                                        <td>" . htmlspecialchars($row['nom_admin'] . ' ' . $row['prenom_admin']) . "</td>
-                                        <td class='status-defectueux'>" . htmlspecialchars($row['etat_retour']) . "</td>
-                                        <td>" . htmlspecialchars($row['commentaire']) . "</td>
-                                        </tr>";
+                            try {
+                                $stmt = $pdo->query($query);
+                                
+                                $rowCount = 0;
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $rowCount++;
+                                    // Gérer le cas où l'administrateur n'existe pas
+                                    $admin_info = !empty($row['nom_admin']) ? htmlspecialchars($row['nom_admin'] . ' ' . $row['prenom_admin']) : 'Non spécifié';
+                                    
+                                    echo "<tr>
+                                            <td>" . date('d/m/Y H:i', strtotime($row['date_retour'])) . "</td>
+                                            <td>" . htmlspecialchars($row['nom_materiel']) . "</td>
+                                            <td>" . htmlspecialchars($row['type']) . "</td>
+                                            <td>" . htmlspecialchars($row['quantite']) . "</td>
+                                            <td>" . htmlspecialchars($row['nom_utilisateur'] . ' ' . $row['prenom_utilisateur']) . "</td>
+                                            <td>" . $admin_info . "</td>
+                                            <td class='status-defectueux'>" . htmlspecialchars($row['etat_retour']) . "</td>
+                                            <td>" . htmlspecialchars($row['commentaire']) . "</td>
+                                            </tr>";
+                                }
+                                
+                                if ($rowCount == 0) {
+                                    echo "<tr><td colspan='8' class='text-center'>Aucun matériel défectueux trouvé</td></tr>";
+                                    
+                                    // Vérification simple pour voir si les tables existent et contiennent des données
+                                    $checkTables = $pdo->query("SELECT 
+                                                            (SELECT COUNT(*) FROM retour_pret WHERE etat_retour = 'défectueux') as def_count,
+                                                            (SELECT COUNT(*) FROM retour_pret) as total_retours,
+                                                            (SELECT COUNT(*) FROM retour_pret WHERE id_admin IS NOT NULL) as retours_valides");
+                                    $tableStats = $checkTables->fetch(PDO::FETCH_ASSOC);
+                                    
+                                    echo "<tr><td colspan='8' class='text-center text-muted'>";
+                                    echo "Statistiques: {$tableStats['def_count']} retours défectueux sur {$tableStats['total_retours']} retours, ";
+                                    echo "{$tableStats['retours_valides']} retours validés par un administrateur";
+                                    echo "</td></tr>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "<tr><td colspan='8' class='text-center text-danger'>Erreur de base de données: " . $e->getMessage() . "</td></tr>";
                             }
                             ?>
                         </tbody>
@@ -119,15 +144,15 @@ if (!isset($_SESSION['admin_id'])) {
                 url: window.location.href,
                 method: 'GET',
                 success: function(response) {
-                    // Extraire le contenu des notifications du HTML reçu
-                    var newContent = $(response).find('.container.mt-4').html();
-                    $('.container.mt-4').html(newContent);
+                    // Corriger le sélecteur pour cibler le bon conteneur
+                    var newContent = $(response).find('.card-body').html();
+                    $('.card-body').html(newContent);
                 }
             });
         }
 
-        // Rafraîchir les notifications toutes les 30 secondes
-        setInterval(refreshNotifications, 3000);
+        // Rafraîchir les données toutes les 30 secondes
+        setInterval(refreshNotifications, 30000);
     </script>
 </body>
 </html> 

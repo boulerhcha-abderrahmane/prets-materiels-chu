@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_demande']) && isse
             }
 
             // ajoute une entrée dans la table retour_pret
-            $insertRetour = $pdo->prepare("INSERT INTO retour_pret (id_demande, date_retour,  etat_retour, commentaire) VALUES (?, NOW(), ?, ?)");
-            $insertRetour->execute([$id_demande,  $etat_retour, $commentaire]);
+            $insertRetour = $pdo->prepare("INSERT INTO retour_pret (id_demande, date_retour, etat_retour, commentaire, id_admin) VALUES (?, NOW(), ?, ?, ?)");
+            $insertRetour->execute([$id_demande, $etat_retour, $commentaire, $_SESSION['admin_id']]);
 
             // Ajouter une entrée dans l'historique des actions
             $actionDescription = "Retour de matériel : {$demande['nom_materiel']} (Quantité : {$demande['quantite']}) - État : {$etat_retour} - Retourné par {$demande['prenom_utilisateur']} {$demande['nom_utilisateur']}";

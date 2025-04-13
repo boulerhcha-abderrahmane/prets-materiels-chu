@@ -148,6 +148,38 @@ if (count($materiels_en_retard) > 0) {
         if ($emailResult['success']) {
             $_SESSION['blocage_email_envoye'] = true;
             error_log("Flag blocage_email_envoye défini à true");
+            
+            // Récupérer les emails des administrateurs
+            $stmt_admins = $pdo->query("SELECT GROUP_CONCAT(email) as emails FROM administrateur WHERE email IS NOT NULL");
+            $admin_emails = $stmt_admins->fetch(PDO::FETCH_ASSOC)['emails'];
+            
+            if ($admin_emails) {
+                // Envoyer email aux administrateurs
+                $admin_messageHtml = "Bonjour,<br><br>";
+                $admin_messageHtml .= "Un utilisateur a été suspendu pour des matériels non retournés :<br><br>";
+                $admin_messageHtml .= "👤 <strong>Utilisateur :</strong> " . $user['prenom'] . " " . $user['nom'] . "<br>";
+                $admin_messageHtml .= "📧 <strong>Email :</strong> " . $user['email'] . "<br><br>";
+                $admin_messageHtml .= "<strong>Matériels en retard :</strong><br><ul>";
+                
+                foreach ($materiels_en_retard as $materiel_retard) {
+                    $admin_messageHtml .= "<li>" . $materiel_retard['quantite'] . " x " . $materiel_retard['nom_materiel'] . 
+                                          " (Date de retour prévue : " . date('d/m/Y', strtotime($materiel_retard['date_retour_prevue'])) . ")</li>";
+                }
+                
+                $admin_messageHtml .= "</ul><br>";
+                $admin_messageHtml .= "L'utilisateur a été informé et son accès aux emprunts a été suspendu.<br><br>";
+                $admin_messageHtml .= "Cordialement,<br>";
+                $admin_messageHtml .= "Le Système de Gestion des Prêts";
+                
+                $adminEmailResult = $emailService->sendEmail(
+                    $admin_emails,
+                    'ALERTE - Utilisateur suspendu pour matériels non retournés',
+                    $admin_messageHtml,
+                    true // Utiliser BCC
+                );
+                
+                error_log("Résultat envoi email aux admins: " . json_encode($adminEmailResult));
+            }
         } else {
             error_log("ÉCHEC envoi email blocage: " . ($emailResult['error'] ?? 'Erreur inconnue'));
         }

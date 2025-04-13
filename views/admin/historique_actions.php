@@ -1,4 +1,4 @@
-<?php
+    <?php
 require_once '../../config/config.php';
 session_start();
 
@@ -158,6 +158,12 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             background-color: #f8f9fa;
             min-height: 100vh;
             padding-top: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .container-fluid {
+            max-width: 100%;
+            padding: 0;
         }
 
         .filter-card {
@@ -285,8 +291,8 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             border-radius: 15px;
             margin-bottom: 30px;
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 80%;
+            margin: 0 auto 30px;
         }
 
         .section-header {
@@ -295,6 +301,7 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             background: linear-gradient(135deg, #2c3e50, #3498db);
             color: white;
             border-radius: 15px 15px 0 0;
+            position: relative;
         }
 
         .section-body {
@@ -371,35 +378,39 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             z-index: 100;
             background: white;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 30px;
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
 
         .category-btn {
             min-width: 160px;
-            padding: 15px 25px;
+            padding: 12px 20px;
             font-weight: 500;
             transition: all 0.3s ease;
             border-radius: 10px;
             margin: 5px;
             white-space: nowrap;
+            background-color: #f0f2f5;
+            color: #495057;
+            border: none;
         }
 
         .category-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: #e9ecef;
         }
 
         .category-btn.active {
-            background-color: #2c3e50;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
             color: white;
-            border-color: #2c3e50;
         }
 
         .category-section {
             display: none;
             animation: fadeIn 0.3s ease;
+            width: 100%;
         }
 
         .category-section.active {
@@ -415,30 +426,114 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             justify-content: center;
             gap: 10px !important;
         }
+        
+        .delete-btn {
+            color: #dc3545;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: none;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .row {
+            width: 100%;
+            margin: 0;
+        }
+
+        .page-title {
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+        }
+
+        .delete-all-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .delete-all-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.2);
+        }
     </style>
 </head>
 <body> 
     <?php include '../../includes/sidebar.php'; ?>
     <div class="content-wrapper">
         <div class="container-fluid">
-            <h2 class="mb-4">Historique des Actions</h2>
+            <h2 class="page-title">Historique des Actions</h2>
+
+            <!-- Bouton de suppression globale -->
+            <div class="d-flex justify-content-end mb-4">
+                <button class="btn btn-danger" onclick="deleteAllHistory()">
+                    <i class="fas fa-trash-alt me-2"></i>Vider tout l'historique
+                </button>
+            </div>
 
             <!-- Uniquement les boutons de navigation -->
             <div class="nav-buttons">
                 <div class="d-flex flex-wrap justify-content-center gap-2">
-                    <button type="button" class="btn btn-outline-primary category-btn active" data-category="utilisateur">
+                    <button type="button" class="category-btn active" data-category="utilisateur">
                         <i class="fas fa-users me-2"></i>Utilisateurs
                     </button>
-                    <button type="button" class="btn btn-outline-primary category-btn" data-category="materiel">
+                    <button type="button" class="category-btn" data-category="materiel">
                         <i class="fas fa-laptop me-2"></i>Matériel
                     </button>
-                    <button type="button" class="btn btn-outline-primary category-btn" data-category="demandes">
+                    <button type="button" class="category-btn" data-category="demandes">
                         <i class="fas fa-file-alt me-2"></i>Demandes
                     </button>
-                    <button type="button" class="btn btn-outline-primary category-btn" data-category="email">
+                    <button type="button" class="category-btn" data-category="email">
                         <i class="fas fa-envelope me-2"></i>Emails
                     </button>
-                    <button type="button" class="btn btn-outline-primary category-btn" data-category="administrateur">
+                    <button type="button" class="category-btn" data-category="administrateur">
                         <i class="fas fa-user-shield me-2"></i>Administrateurs
                     </button>
                 </div>
@@ -454,11 +549,12 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                                     <i class="fas <?= $group['icon'] ?> me-2"></i>
                                     <?= $group['title'] ?>
                                     <?php if (isset($group['actions'])): ?>
-                                        <span class="badge bg-light text-dark ms-2">
-                                            <?= count($group['actions']) ?>
-                                        </span>
+                                        <!-- Supprimé: badge compteur -->
                                     <?php endif; ?>
                                 </h3>
+                                <button class="delete-all-btn" onclick="deleteAllActions('<?= $key ?>')" title="Supprimer toutes les actions">
+                                    <i class="fas fa-trash-alt"></i> Tout supprimer
+                                </button>
                             </div>
                             <div class="section-body">
                                 <?php if (isset($group['actions'])): ?>
@@ -471,17 +567,22 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                                         });
                                         ?>
                                         <?php foreach ($group['actions'] as $action): ?>
-                                            <div class="action-card">
-                                                <div class="action-header d-flex justify-content-between align-items-center">
-                                                    <span class="action-type <?= 'type-' . explode('_', $action['type_action'])[0] ?>">
-                                                        <i class="fas <?= $action['type_action'] === 'ajout_utilisateur' ? 'fa-user-plus' : 
-                                                                    ($action['type_action'] === 'modification_utilisateur' ? 'fa-user-edit' : 'fa-user-minus') ?> me-1"></i>
-                                                        <?= str_replace('_', ' ', $action['type_action']) ?>
-                                                    </span>
-                                                    <span class="text-muted">
-                                                        <i class="far fa-clock me-1"></i>
-                                                        <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
-                                                    </span>
+                                            <div class="action-card" data-action-id="<?= $action['id_action'] ?>">
+                                                <div class="action-header">
+                                                    <div class="action-header-content">
+                                                        <span class="action-type <?= 'type-' . explode('_', $action['type_action'])[0] ?>">
+                                                            <i class="fas <?= $action['type_action'] === 'ajout_utilisateur' ? 'fa-user-plus' : 
+                                                                        ($action['type_action'] === 'modification_utilisateur' ? 'fa-user-edit' : 'fa-user-minus') ?> me-1"></i>
+                                                            <?= str_replace('_', ' ', $action['type_action']) ?>
+                                                        </span>
+                                                        <span class="text-muted">
+                                                            <i class="far fa-clock me-1"></i>
+                                                            <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
+                                                        </span>
+                                                    </div>
+                                                    <button class="delete-btn" onclick="deleteAction(<?= $action['id_action'] ?>)" title="Supprimer">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
                                                 </div>
                                                 <div class="action-body">
                                                     <div class="mb-2 text-muted">
@@ -516,31 +617,36 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                                             
                                             <?php if (!empty($all_actions)): ?>
                                                 <?php foreach ($all_actions as $action): ?>
-                                                    <div class="action-card">
-                                                        <div class="action-header d-flex justify-content-between align-items-center">
-                                                            <span class="action-type type-<?= explode('_', $action['type_action'])[0] ?>">
-                                                                <i class="fas <?php
-                                                                    switch ($action['type_action']) {
-                                                                        // Matériel
-                                                                        case 'ajout_materiel': echo 'fa-plus-circle'; break;
-                                                                        case 'modification_materiel': echo 'fa-edit'; break;
-                                                                        case 'suppression_materiel': echo 'fa-minus-circle'; break;
-                                                                        // Demandes
-                                                                        case 'validation_demande': echo 'fa-check-circle'; break;
-                                                                        case 'refus_demande': echo 'fa-times-circle'; break;
-                                                                        case 'validation_retour': echo 'fa-undo'; break;
-                                                                        // Emails
-                                                                        case 'ajout_email': echo 'fa-envelope-open'; break;
-                                                                        case 'suppression_email': echo 'fa-envelope-slash'; break;
-                                                                        default: echo 'fa-circle';
-                                                                    }
-                                                                ?> me-1"></i>
-                                                                <?= str_replace('_', ' ', $action['type_action']) ?>
-                                                            </span>
-                                                            <span class="text-muted">
-                                                                <i class="far fa-clock me-1"></i>
-                                                                <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
-                                                            </span>
+                                                    <div class="action-card" data-action-id="<?= $action['id_action'] ?>">
+                                                        <div class="action-header">
+                                                            <div class="action-header-content">
+                                                                <span class="action-type type-<?= explode('_', $action['type_action'])[0] ?>">
+                                                                    <i class="fas <?php
+                                                                        switch ($action['type_action']) {
+                                                                            // Matériel
+                                                                            case 'ajout_materiel': echo 'fa-plus-circle'; break;
+                                                                            case 'modification_materiel': echo 'fa-edit'; break;
+                                                                            case 'suppression_materiel': echo 'fa-minus-circle'; break;
+                                                                            // Demandes
+                                                                            case 'validation_demande': echo 'fa-check-circle'; break;
+                                                                            case 'refus_demande': echo 'fa-times-circle'; break;
+                                                                            case 'validation_retour': echo 'fa-undo'; break;
+                                                                            // Emails
+                                                                            case 'ajout_email': echo 'fa-envelope-open'; break;
+                                                                            case 'suppression_email': echo 'fa-envelope-slash'; break;
+                                                                            default: echo 'fa-circle';
+                                                                        }
+                                                                    ?> me-1"></i>
+                                                                    <?= str_replace('_', ' ', $action['type_action']) ?>
+                                                                </span>
+                                                                <span class="text-muted">
+                                                                    <i class="far fa-clock me-1"></i>
+                                                                    <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
+                                                                </span>
+                                                            </div>
+                                                            <button class="delete-btn" onclick="deleteAction(<?= $action['id_action'] ?>)" title="Supprimer">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
                                                         </div>
                                                         <div class="action-body">
                                                             <div class="mb-2 text-muted">
@@ -563,22 +669,24 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                                                     <h4 class="subtype-title">
                                                         <i class="fas <?= $subtype['icon'] ?> me-2"></i>
                                                         <?= $subtype['title'] ?>
-                                                        <span class="badge bg-secondary ms-2">
-                                                            <?= count($subtype['actions']) ?>
-                                                        </span>
                                                     </h4>
                                                     <?php if (!empty($subtype['actions'])): ?>
                                                         <?php foreach ($subtype['actions'] as $action): ?>
-                                                            <div class="action-card">
-                                                                <div class="action-header d-flex justify-content-between align-items-center">
-                                                                    <span class="action-type type-<?= $subtype_key ?>">
-                                                                        <i class="fas <?= $subtype['icon'] ?> me-1"></i>
-                                                                        <?= str_replace('_', ' ', $action['type_action']) ?>
-                                                                    </span>
-                                                                    <span class="text-muted">
-                                                                        <i class="far fa-clock me-1"></i>
-                                                                        <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
-                                                                    </span>
+                                                            <div class="action-card" data-action-id="<?= $action['id_action'] ?>">
+                                                                <div class="action-header">
+                                                                    <div class="action-header-content">
+                                                                        <span class="action-type type-<?= $subtype_key ?>">
+                                                                            <i class="fas <?= $subtype['icon'] ?> me-1"></i>
+                                                                            <?= str_replace('_', ' ', $action['type_action']) ?>
+                                                                        </span>
+                                                                        <span class="text-muted">
+                                                                            <i class="far fa-clock me-1"></i>
+                                                                            <?= date('d/m/Y H:i', strtotime($action['date_action'])) ?>
+                                                                        </span>
+                                                                    </div>
+                                                                    <button class="delete-btn" onclick="deleteAction(<?= $action['id_action'] ?>)" title="Supprimer">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
                                                                 </div>
                                                                 <div class="action-body">
                                                                     <div class="mb-2 text-muted">
@@ -609,12 +717,86 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
         </div>
     </div>
 
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer <strong>TOUTES</strong> les actions de cette catégorie ?</p>
+                    <p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Cette opération est <strong>irréversible</strong>.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash-alt me-2"></i>Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmation de suppression d'une action individuelle -->
+    <div class="modal fade" id="deleteSingleConfirmModal" tabindex="-1" aria-labelledby="deleteSingleConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteSingleConfirmModalLabel">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cette action ?</p>
+                    <p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Cette opération est <strong>irréversible</strong>.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteSingleBtn">
+                        <i class="fas fa-trash-alt me-2"></i>Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression de tout l'historique -->
+    <div class="modal fade" id="deleteAllHistoryModal" tabindex="-1" aria-labelledby="deleteAllHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteAllHistoryModalLabel">⚠️ Attention: Suppression totale</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Action très destructive</h5>
+                        <p>Vous êtes sur le point de <strong>supprimer TOUT l'historique des actions</strong> de toutes les catégories.</p>
+                    </div>
+                    <p>Cette opération est <strong>irréversible</strong> et effacera toutes les traces des actions effectuées dans le système.</p>
+                    <p>Pour confirmer, veuillez taper "SUPPRIMER" dans le champ ci-dessous:</p>
+                    <input type="text" id="confirmText" class="form-control" placeholder="Tapez SUPPRIMER">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAllBtn" disabled>
+                        <i class="fas fa-trash-alt me-2"></i>Supprimer définitivement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        let categoryToDelete = ''; // Variable globale pour stocker la catégorie à supprimer
+        let actionIdToDelete = null; // Variable globale pour stocker l'ID de l'action à supprimer
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Afficher la première section par défaut
-            document.querySelector('#utilisateur-section').style.display = 'block';
+            document.getElementById('utilisateur-section').classList.add('active');
 
             // Gérer les clics sur les boutons
             document.querySelectorAll('.category-btn').forEach(button => {
@@ -626,15 +808,17 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
 
                     // Cacher toutes les sections
                     document.querySelectorAll('.category-section').forEach(section => {
-                        section.style.display = 'none';
+                        section.classList.remove('active');
                     });
 
                     // Activer le bouton cliqué
                     this.classList.add('active');
 
-                    // Afficher la section correspondante
+                    // Afficher la section correspondante avec animation
                     const categoryId = this.dataset.category;
-                    document.querySelector(`#${categoryId}-section`).style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById(categoryId + '-section').classList.add('active');
+                    }, 50);
                 });
             });
 
@@ -642,7 +826,261 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                 dateFormat: "Y-m-d",
                 locale: "fr"
             });
+            
+            // Initialiser les modals
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            const deleteSingleModal = document.getElementById('deleteSingleConfirmModal');
+            
+            // Configurer le bouton de confirmation de suppression en masse
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                // Fermer la modal
+                bootstrap.Modal.getInstance(deleteModal).hide();
+                
+                // Exécuter la suppression
+                executeDeleteAllActions(categoryToDelete);
+            });
+            
+            // Configurer le bouton de confirmation pour la suppression individuelle
+            document.getElementById('confirmDeleteSingleBtn').addEventListener('click', function() {
+                // Fermer la modal
+                bootstrap.Modal.getInstance(deleteSingleModal).hide();
+                
+                // Exécuter la suppression
+                executeDeleteAction(actionIdToDelete);
+            });
+
+            // Configurer le champ de confirmation pour la suppression totale
+            const confirmText = document.getElementById('confirmText');
+            const confirmDeleteAllBtn = document.getElementById('confirmDeleteAllBtn');
+            
+            confirmText.addEventListener('input', function() {
+                confirmDeleteAllBtn.disabled = this.value !== 'SUPPRIMER';
+            });
+            
+            // Configurer le bouton de confirmation pour la suppression totale
+            confirmDeleteAllBtn.addEventListener('click', function() {
+                // Fermer la modal
+                const deleteAllHistoryModal = document.getElementById('deleteAllHistoryModal');
+                bootstrap.Modal.getInstance(deleteAllHistoryModal).hide();
+                
+                // Exécuter la suppression
+                executeDeleteAllHistory();
+                
+                // Réinitialiser le champ de confirmation
+                confirmText.value = '';
+                confirmDeleteAllBtn.disabled = true;
+            });
         });
+        
+        // Fonction pour afficher la modal de confirmation pour une action individuelle
+        function deleteAction(actionId) {
+            // Stocker l'ID de l'action à supprimer
+            actionIdToDelete = actionId;
+            
+            // Afficher la modal
+            const deleteSingleModal = new bootstrap.Modal(document.getElementById('deleteSingleConfirmModal'));
+            deleteSingleModal.show();
+        }
+        
+        // Fonction pour exécuter la suppression d'une action individuelle
+        function executeDeleteAction(actionId) {
+            if (!actionId) {
+                alert('Erreur: Action non définie');
+                return;
+            }
+            
+            fetch('../../controllers/admin/delete_action.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action_id=' + actionId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Supprimer l'élément du DOM
+                    const actionElement = document.querySelector(`.action-card[data-action-id="${actionId}"]`);
+                    if (actionElement) {
+                        actionElement.remove();
+                        
+                        // Afficher un message de succès
+                        const toast = document.createElement('div');
+                        toast.className = 'position-fixed bottom-0 end-0 p-3';
+                        toast.style.zIndex = '11';
+                        toast.innerHTML = `
+                            <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        Action supprimée avec succès !
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        
+                        const toastElement = new bootstrap.Toast(toast.querySelector('.toast'));
+                        toastElement.show();
+                        
+                        // Supprimer le toast après 3 secondes
+                        setTimeout(() => {
+                            toast.remove();
+                        }, 3000);
+                    }
+                } else {
+                    // Afficher un message d'erreur
+                    alert(data.message || 'Une erreur est survenue lors de la suppression de l\'action.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la suppression de l\'action.');
+            });
+        }
+        
+        // Fonction pour afficher la modal de confirmation pour suppression en masse
+        function deleteAllActions(category) {
+            // Stocker la catégorie à supprimer dans la variable globale
+            categoryToDelete = category;
+            console.log('Catégorie à supprimer:', categoryToDelete); // Debug
+            
+            // Afficher la modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            deleteModal.show();
+        }
+        
+        // Fonction pour exécuter la suppression de toutes les actions
+        function executeDeleteAllActions(category) {
+            console.log('Exécution de la suppression pour la catégorie:', category); // Debug
+            
+            // Vérifier que la catégorie est bien définie
+            if (!category) {
+                alert('Erreur: Catégorie non définie');
+                return;
+            }
+            
+            fetch('../../controllers/admin/delete_all_actions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'category=' + encodeURIComponent(category)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Supprimer tous les éléments de la catégorie du DOM
+                    const categorySection = document.getElementById(category + '-section');
+                    const actionCards = categorySection.querySelectorAll('.action-card');
+                    
+                    actionCards.forEach(card => {
+                        card.remove();
+                    });
+                    
+                    // Ajouter un message "Aucune action trouvée"
+                    const sectionBody = categorySection.querySelector('.section-body');
+                    if (sectionBody && actionCards.length > 0) {
+                        sectionBody.innerHTML = '<p class="text-muted">Aucune action trouvée.</p>';
+                    }
+                    
+                    // Afficher un message de succès
+                    const toast = document.createElement('div');
+                    toast.className = 'position-fixed bottom-0 end-0 p-3';
+                    toast.style.zIndex = '11';
+                    toast.innerHTML = `
+                        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    ${data.message || 'Toutes les actions ont été supprimées avec succès !'}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    
+                    const toastElement = new bootstrap.Toast(toast.querySelector('.toast'));
+                    toastElement.show();
+                    
+                    // Supprimer le toast après 3 secondes
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 3000);
+                } else {
+                    // Afficher un message d'erreur
+                    alert(data.message || 'Une erreur est survenue lors de la suppression des actions.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la suppression des actions.');
+            });
+        }
+
+        // Fonction pour afficher la modal de confirmation pour la suppression totale
+        function deleteAllHistory() {
+            // Afficher la modal
+            const deleteAllHistoryModal = new bootstrap.Modal(document.getElementById('deleteAllHistoryModal'));
+            deleteAllHistoryModal.show();
+        }
+        
+        // Fonction pour exécuter la suppression de tout l'historique
+        function executeDeleteAllHistory() {
+            fetch('../../controllers/admin/delete_all_history.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Supprimer tous les éléments de toutes les catégories du DOM
+                    const actionCards = document.querySelectorAll('.action-card');
+                    actionCards.forEach(card => {
+                        card.remove();
+                    });
+                    
+                    // Ajouter un message "Aucune action trouvée" dans chaque section
+                    const sectionBodies = document.querySelectorAll('.section-body');
+                    sectionBodies.forEach(body => {
+                        body.innerHTML = '<p class="text-muted">Aucune action trouvée.</p>';
+                    });
+                    
+                    // Afficher un message de succès
+                    const toast = document.createElement('div');
+                    toast.className = 'position-fixed bottom-0 end-0 p-3';
+                    toast.style.zIndex = '11';
+                    toast.innerHTML = `
+                        <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    ${data.message || 'Tout l\'historique a été supprimé avec succès !'}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    
+                    const toastElement = new bootstrap.Toast(toast.querySelector('.toast'));
+                    toastElement.show();
+                    
+                    // Supprimer le toast après 3 secondes
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 3000);
+                } else {
+                    // Afficher un message d'erreur
+                    alert(data.message || 'Une erreur est survenue lors de la suppression de l\'historique.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la suppression de l\'historique.');
+            });
+        }
     </script>
 </body>
 </html> 

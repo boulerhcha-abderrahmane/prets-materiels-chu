@@ -157,6 +157,6 @@ if (isset($_SESSION['status_message'])) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script src="../../assets/js/home.js"></script>
-    <?php include '../../includes/footer.php'; ?>
+   
 </body>
 </html>

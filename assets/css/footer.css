@@ -1,44 +1,82 @@
 /* Footer Styles */
 :root {
-    --primary-gradient: linear-gradient(135deg, #2c3e50, #3498db);
-    --primary-color: #3498db;
+    --primary-gradient: linear-gradient(135deg, #0e57a0, #3498db);
+    --primary-color: #0c5b8f;
     --text-primary: #2c3e50;
     --text-secondary: #7f8c8d;
     --bg-white: #ffffff;
     --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
     --transition-base: all 0.3s ease;
     --border-radius: 10px;
+    --footer-bg: linear-gradient(135deg, #1a4f8b, #07315e);
+    --footer-accent: #0d4b77;
+    --footer-text: #ecf0f1;
+    --footer-secondary-text: #b3c6d1;
 }
 
 .footer-container {
-    background: #2c3e50;
-    color: #ecf0f1;
-    padding: 3rem 0 0;
-  
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 4rem 0 0;
     font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.footer-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2ecc71, #3498db, #9b59b6);
 }
 
 .footer-content {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Decorative elements */
+.footer-container::after {
+    content: '';
+    position: absolute;
+    right: -150px;
+    bottom: -150px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    z-index: 1;
 }
 
 .footer-section {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.footer-section:hover {
+    transform: translateY(-5px);
 }
 
 .footer-section h3 {
-    color: #ecf0f1;
+    color: var(--footer-text);
     font-family: 'Playfair Display', serif;
     font-weight: 600;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    margin-bottom: 1.8rem;
     position: relative;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.8rem;
+    letter-spacing: 0.5px;
 }
 
 .footer-section h3::after {
@@ -47,41 +85,62 @@
     left: 0;
     bottom: 0;
     width: 50px;
-    height: 2px;
-    background: var(--primary-color);
+    height: 3px;
+    background: var(--footer-accent);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.footer-section:hover h3::after {
+    width: 80px;
 }
 
 .footer-section p {
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    color: #bdc3c7;
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+    color: var(--footer-secondary-text);
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
 }
 
 .footer-section.about p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
 }
 
 .social-links {
     display: flex;
     gap: 1rem;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 .social-links a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: rgba(236, 240, 241, 0.1);
-    color: #ecf0f1;
-    transition: var(--transition-base);
+    background: rgba(236, 240, 241, 0.08);
+    color: var(--footer-text);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .social-links a:hover {
-    background: var(--primary-color);
-    transform: translateY(-3px);
+    background: var(--footer-accent);
+    transform: translateY(-5px) rotate(5deg);
+    box-shadow: 0 5px 15px rgba(69, 170, 242, 0.3);
+    border-color: transparent;
+}
+
+.social-links a i {
+    transition: transform 0.3s ease;
+}
+
+.social-links a:hover i {
+    transform: scale(1.2);
 }
 
 .footer-section.links ul {
@@ -90,44 +149,81 @@
 }
 
 .footer-section.links li {
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.footer-section.links li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--footer-accent);
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.footer-section.links li:hover::before {
+    transform: translateX(3px);
 }
 
 .footer-section.links a {
-    color: #bdc3c7;
+    color: var(--footer-secondary-text);
     text-decoration: none;
-    transition: var(--transition-base);
+    transition: all 0.3s ease;
     display: inline-block;
+    font-size: 0.95rem;
 }
 
 .footer-section.links a:hover {
-    color: var(--primary-color);
+    color: var(--footer-text);
     transform: translateX(5px);
 }
 
 .footer-section.contact p {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.footer-section.contact p:hover {
+    transform: translateX(5px);
+    color: var(--footer-text);
 }
 
 .footer-section.contact i {
-    color: var(--primary-color);
+    color: var(--footer-accent);
     font-size: 1.1rem;
     width: 20px;
+    transition: transform 0.3s ease;
+}
+
+.footer-section.contact p:hover i {
+    transform: scale(1.2);
 }
 
 .footer-bottom {
-    background: #1a252f;
+    background: rgba(0, 0, 0, 0.1);
     padding: 1.5rem 0;
     text-align: center;
+    position: relative;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .footer-bottom p {
-
     font-size: 0.9rem;
-    color: #95a5a6;
+    color: var(--footer-secondary-text);
+    letter-spacing: 0.5px;
+}
+
+/* Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 
 /* Responsive Design */
@@ -161,5 +257,13 @@
     
     .footer-section.contact p {
         justify-content: center;
+    }
+    
+    .footer-section.links li {
+        padding-left: 0;
+    }
+    
+    .footer-section.links li::before {
+        display: none;
     }
 } 

@@ -128,8 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = "Erreur lors de l'upload du fichier.";
             }
         }
-    } else if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
-        // Mise à jour sans nouvelle photo - mais seulement si ce n'est pas une erreur de fichier manquant
+    } else {
+        // Mise à jour sans nouvelle photo 
+        // Cette condition exécute une mise à jour même quand UPLOAD_ERR_NO_FILE est présent
         $stmt = $pdo->prepare("UPDATE utilisateur SET nom = ?, prenom = ? WHERE id_utilisateur = ?");
         $stmt->execute([$nom, $prenom, $userId]);
         
@@ -1075,6 +1076,6 @@ input:focus, select:focus, textarea:focus {
             }
         });
     </script>
-     <?php include '../../includes/footer.php'; ?>
+  
 </body>
 </html>
