@@ -130,7 +130,7 @@ if (count($materiels_en_retard) > 0) {
         $messageHtml .= "- Retourner les matériels concernés dans les plus brefs délais<br><br>";
         $messageHtml .= "Vous pouvez répondre directement à cet email pour nous donner plus d'informations sur votre situation.<br><br>";
         $messageHtml .= "Cordialement,<br>";
-        $messageHtml .= "Le Service de Gestion des Prêts";
+        $messageHtml .= "Le Systeme de Gestion des Prêts de materiels";
         
         // Ajouter des logs de diagnostic
         error_log("==== ENVOI EMAIL BLOCAGE ====");
@@ -169,7 +169,7 @@ if (count($materiels_en_retard) > 0) {
                 $admin_messageHtml .= "</ul><br>";
                 $admin_messageHtml .= "L'utilisateur a été informé et son accès aux emprunts a été suspendu.<br><br>";
                 $admin_messageHtml .= "Cordialement,<br>";
-                $admin_messageHtml .= "Le Système de Gestion des Prêts";
+                $admin_messageHtml .= "Le Système de Gestion des Prêts de materiels";
                 
                 $adminEmailResult = $emailService->sendEmail(
                     $admin_emails,
@@ -251,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageHtml .= "🏷️ - Type : " . $materiel['type'] . "<br>";
                 $messageHtml .= "🔢 - Quantité : " . $quantite . "<br>";
                 $messageHtml .= "Veuillez vous connecter au système pour traiter cette demande.<br><br>";
-                $messageHtml .= "Cordialement,<br>";
+                $messageHtml .=  "Cordialement,\nLe systeme de gestion des prêts de matériels ";
                 
                 // Un seul envoi d'email avec tous les administrateurs en BCC
                 $emailService->sendEmail(

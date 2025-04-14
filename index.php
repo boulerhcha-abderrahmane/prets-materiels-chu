@@ -27,9 +27,9 @@
             --gradient-accent: linear-gradient(135deg, #2ecc71, #45b17f);
             --gradient-accent-2: linear-gradient(135deg, #f39c12, #f1c40f);
             --box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-            --border-radius: 20px;
-            --border-radius-sm: 12px;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --border-radius: 16px;
+            --border-radius-sm: 10px;
+            --transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         /* Styles de base */
@@ -40,9 +40,9 @@
             color: var(--text-color);
             overflow-x: hidden;
             position: relative;
-            padding-top: 72px;
-            line-height: 1.7;
-            letter-spacing: 0.2px;
+            padding-top: 60px;
+            line-height: 1.6;
+            letter-spacing: 0.15px;
         }
 
         /* Effets communs */
@@ -55,7 +55,7 @@
 
         /* Navigation */
         #mainNav {
-            padding: 1rem 0;
+            padding: 0.8rem 0;
             transition: var(--transition);
             background: rgba(26, 79, 139, 0.95);
             backdrop-filter: blur(10px);
@@ -66,7 +66,7 @@
 
         #mainNav.navbar-shrink {
             background: rgba(26, 79, 139, 0.98);
-            padding: 0.5rem 0;
+            padding: 0.4rem 0;
         }
 
         .navbar-brand {
@@ -95,7 +95,7 @@
             color: white;
             font-weight: 600;
             font-size: 0.95rem;
-            padding: 0.75rem 1rem;
+            padding: 0.7rem 0.9rem;
             letter-spacing: 0.5px;
             position: relative;
             transition: var(--transition);
@@ -119,10 +119,10 @@
         /* Header */
         .header {
             background: var(--gradient-primary);
-            padding: 9rem 0 11rem;
+            padding: 5rem 0 7rem;
             position: relative;
             overflow: hidden;
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
         }
 
         .header::before {
@@ -141,8 +141,8 @@
         .header h1 {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: 4rem;
-            margin-bottom: 1.2rem;
+            font-size: 3rem;
+            margin-bottom: 1rem;
             color: #fff;
             text-shadow: 0 2px 10px rgba(0,0,0,0.15);
             letter-spacing: 1px;
@@ -155,20 +155,20 @@
         .header h1::after {
             content: '';
             display: block;
-            width: 80px;
-            height: 4px;
+            width: 60px;
+            height: 3px;
             background: var(--accent-color-2);
-            margin: 1rem auto 0;
+            margin: 0.8rem auto 0;
             border-radius: 2px;
         }
 
         .header p {
             font-weight: 400;
             color: rgba(255,255,255,0.95);
-            font-size: 1.35rem;
+            font-size: 1.2rem;
             letter-spacing: 0.5px;
             max-width: 700px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 1.5rem;
             opacity: 0;
             transform: translateY(20px);
             animation: fadeInUp 0.8s forwards 0.6s;
@@ -180,32 +180,32 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             transition: var(--transition);
             opacity: 0;
             transform: translateY(30px);
             animation: fadeInUp 0.8s forwards 0.9s;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: -3rem;
         }
 
         .card-container:hover {
-            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.1);
-            transform: translateY(-15px);
+            transform: translateY(-10px);
         }
 
         .card-header {
             background: rgba(248, 249, 250, 0.7);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            padding: 2.5rem;
+            padding: 1.8rem;
             text-align: center;
             border-bottom: 1px solid rgba(0,0,0,0.03);
         }
 
         .card-header h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--primary-color);
             margin-bottom: 1rem;
             position: relative;
@@ -223,14 +223,18 @@
             border-radius: 2px;
         }
 
+        .card-body {
+            padding: 1.8rem;
+        }
+
         /* Boutons */
         .access-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.3rem 2rem;
+            padding: 1.1rem 1.8rem;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
             border-radius: 50px;
@@ -239,7 +243,7 @@
             overflow: hidden;
             z-index: 1;
             width: 100%;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
@@ -273,7 +277,7 @@
 
         /* Sections */
         .section {
-            padding: 6rem 0;
+            padding: 5rem 0;
             position: relative;
             overflow: hidden;
         }
@@ -287,7 +291,7 @@
         .feature-card {
             background: var(--background-white);
             border-radius: var(--border-radius-sm);
-            padding: 3rem 2rem;
+            padding: 2rem 1.5rem;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
             height: 100%;
             transition: var(--transition);
@@ -320,13 +324,13 @@
         }
 
         .feature-icon {
-            width: 90px;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.4rem;
-            margin: 0 auto 2rem;
+            font-size: 1.8rem;
+            margin: 0 auto 1.2rem;
             color: var(--accent-color);
             background-color: rgba(52, 152, 219, 0.08);
             border-radius: 50%;
@@ -361,8 +365,8 @@
         }
 
         .feature-title {
-            font-size: 1.4rem;
-            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
             font-weight: 600;
             color: var(--primary-color);
         }
@@ -370,13 +374,13 @@
         .feature-description {
             color: var(--text-muted);
             line-height: 1.8;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 2.7rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.4rem;
+            margin-bottom: 1.2rem;
             color: var(--primary-color);
             text-align: center;
             position: relative;
@@ -398,9 +402,9 @@
 
         .section-subtitle {
             text-align: center;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
             max-width: 750px;
             margin-left: auto;
             margin-right: auto;
@@ -418,33 +422,33 @@
         /* Media Queries */
         @media (max-width: 992px) {
             .header {
-                padding: 6rem 0 8rem;
+                padding: 4.5rem 0 6rem;
             }
             
             .header h1 {
-                font-size: 3rem;
+                font-size: 2.7rem;
             }
 
             .section-title {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
         }
 
         @media (max-width: 768px) {
             .header {
-                padding: 5rem 0 7rem;
+                padding: 4rem 0 6rem;
             }
             
             .header h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .header p {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
 
             .card-body {
-                padding: 2rem;
+                padding: 1.8rem;
             }
 
             .section {
@@ -452,34 +456,106 @@
             }
 
             .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
                 font-size: 2rem;
+            }
+            
+            .contact-info {
+                gap: 1.5rem;
             }
         }
 
         @media (max-width: 576px) {
+            body {
+                padding-top: 55px;
+            }
+            
             .header {
-                padding: 4rem 0 6rem;
+                padding: 3rem 0 4.5rem;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.6rem;
             }
             
             .card-header h2 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
+            }
+            
+            .card-header {
+                padding: 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.3rem;
             }
             
             .access-button {
-                padding: 1.2rem 1.5rem;
-                font-size: 0.9rem;
+                padding: 0.9rem 1.2rem;
+                font-size: 0.8rem;
             }
 
             .section-title {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
 
             .section-subtitle {
-                font-size: 1rem;
+                font-size: 0.9rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.8rem 1.2rem;
+            }
+            
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+            
+            .step-title {
+                font-size: 1.15rem;
+            }
+            
+            .contact-card {
+                padding: 1.3rem;
+            }
+            
+            .contact-item i {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+            
+            .contact-item p {
+                font-size: 0.9rem;
+            }
+            
+            .step-container {
+                margin-bottom: 2.5rem;
+            }
+            
+            .contact-info {
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-info {
+                gap: 1.2rem;
             }
         }
 
@@ -491,13 +567,13 @@
         .step-container {
             display: flex;
             position: relative;
-            margin-bottom: 4rem;
+            margin-bottom: 2.5rem;
         }
 
         .step-number {
             flex: 0 0 auto;
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             background: var(--gradient-primary);
             color: white;
             border-radius: 50%;
@@ -505,8 +581,8 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.5rem;
-            margin-right: 1.5rem;
+            font-size: 1.1rem;
+            margin-right: 1.2rem;
             box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
             position: relative;
             z-index: 2;
@@ -529,8 +605,8 @@
         }
 
         .step-title {
-            font-size: 1.4rem;
-            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.7rem;
             font-weight: 600;
             color: var(--primary-color);
         }
@@ -538,6 +614,7 @@
         .step-description {
             color: var(--text-muted);
             line-height: 1.7;
+            font-size: 0.9rem;
         }
 
         .step-container::before {
@@ -557,7 +634,7 @@
 
         .step-image {
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             height: 100%;
             position: relative;
@@ -594,13 +671,14 @@
         /* Contact Section */
         .contact-section {
             background-color: var(--background-light);
+            padding-bottom: 4rem;
         }
 
         .contact-card {
             background: var(--background-white);
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 2.5rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+            padding: 1.8rem;
             text-align: center;
             transition: var(--transition);
             position: relative;
@@ -613,7 +691,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: var(--gradient-primary);
         }
 
@@ -626,8 +704,8 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 2.5rem;
-            margin-top: 1rem;
+            gap: 2rem;
+            margin-top: 0.8rem;
         }
 
         .contact-item {
@@ -642,10 +720,10 @@
         }
 
         .contact-item i {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--accent-color);
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background-color: rgba(52, 152, 219, 0.1);
             border-radius: 50%;
             display: flex;
@@ -663,8 +741,22 @@
             margin: 0;
             font-weight: 500;
             color: var(--text-color);
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
+
+        /* Ajuster l'espacement entre les éléments de contact sur mobile */
+        @media (max-width: 768px) {
+            .contact-info {
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .contact-info {
+                gap: 1.2rem;
+            }
+        }
+
     </style>
 </head>
 <body class="bg-shapes no-spacing">
@@ -860,7 +952,7 @@
             handleScroll(); // Initialize on page load
             
             // Smooth scrolling for anchor links
-            document.querySelectorAll('a.nav-link').forEach(anchor => {
+            document.querySelectorAll('a.nav-link, a.navbar-brand[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     
@@ -870,6 +962,11 @@
                     if (targetSection) {
                         window.scrollTo({
                             top: targetSection.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    } else if (targetId === '#page-top') {
+                        window.scrollTo({
+                            top: 0,
                             behavior: 'smooth'
                         });
                     }

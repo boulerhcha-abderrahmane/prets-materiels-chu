@@ -76,9 +76,9 @@ try {
                     <?php endif; ?>
                 </a>
             </li>
-            <li><a href="historique_actions.php" aria-label="Historiques Actions" <?php echo (basename($_SERVER['PHP_SELF']) == 'historique_actions.php') ? 'class="active"' : ''; ?>><i class="fas fa-box"></i> Historiques Actions</a></li>
             <?php if (isset($_SESSION['admin_role']) && $_SESSION['admin_role'] === 'chef'): ?>
                 <li><a href="manage_admin.php" aria-label="Gestion Admins" <?php echo (basename($_SERVER['PHP_SELF']) == 'manage_admin.php') ? 'class="active"' : ''; ?>><i class="fas fa-user-shield"></i> Gestion Admins</a></li>
+                <li><a href="historique_actions.php" aria-label="Historiques Actions" <?php echo (basename($_SERVER['PHP_SELF']) == 'historique_actions.php') ? 'class="active"' : ''; ?>><i class="fas fa-box"></i> Historiques Actions</a></li>
             <?php endif; ?>
             <li><a href="materiaux_defectueux.php" aria-label="Matériaux Défectueux"><i class="fas fa-exclamation-triangle"></i> Matériaux Défectueux</a></li>
             <li><a href="../logout.php?admin_id=<?php echo $_SESSION['admin_id']; ?>" aria-label="Déconnexion"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>

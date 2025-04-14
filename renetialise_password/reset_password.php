@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "text" => "Bonjour,\n\n" .
                          "Votre mot de passe a été réinitialisé avec succès.\n" .
                          "Si vous n'êtes pas à l'origine de cette action, veuillez contacter l'administrateur immédiatement.\n\n" .
-                         "Cordialement,\nL'équipe de support"
+                         "Cordialement,\nLe systeme de gestion des prêts de matériels "
             );
 
             curl_setopt_array($curl, array(
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            background: linear-gradient(135deg,rgb(15, 83, 139), #3498db);
             min-height: 100vh;
             display: flex;
             align-items: center;

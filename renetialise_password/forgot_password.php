@@ -68,9 +68,12 @@ function sendResetEmail($email, $token) {
     
     $htmlContent = "
         <h2>Réinitialisation de votre mot de passe</h2>
-        <p>Voici votre code de réinitialisation : <strong>{$token}</strong></p>
-        <p>Ce code expirera dans 5 minutes.</p>
-        <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.</p>
+        <p>Bonjour,</p>
+        <p>Nous avons reçu une demande de réinitialisation de mot de passe pour votre compte.</p>
+        <p>Voici votre code de réinitialisation : <strong style='font-size: 18px; background-color: #f2f2f2; padding: 5px 10px; border-radius: 4px;'>{$token}</strong></p>
+        <p>Ce code expirera dans <strong>5 minutes</strong>.</p>
+        <p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email et votre compte restera sécurisé.</p>
+        <p>Cordialement,<br>Le système de gestion des prêts de matériels</p>
     ";
     
     try {
@@ -201,16 +204,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --secondary-color: #64748b;
             --success-color: #059669;
             --danger-color: #dc2626;
-            --background-start:rgb(234, 239, 245);
+            --background-start:rgb(22, 96, 185);
             --background-end:rgb(239, 244, 248);
             --shadow-color: rgba(0, 0, 0, 0.1);
         }
 
         body {
-            background-color: #f5f5f5;
-            background-image: 
-                radial-gradient(at 47% 33%, hsl(214.93, 71%, 90%) 0, transparent 59%), 
-                radial-gradient(at 82% 65%, hsl(218.08, 39%, 91%) 0, transparent 55%);
+            background: linear-gradient(135deg,rgb(15, 83, 139), #3498db);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
@@ -607,5 +607,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
     </script>
 </body>
-</html> 
 </html> 

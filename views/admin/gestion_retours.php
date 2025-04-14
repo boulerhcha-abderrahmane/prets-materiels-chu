@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_demande']) && isse
                 }
 
                 $htmlContent .= "
-                    <p>Cordialement,<br>L'équipe de gestion du matériel</p>
+                    <p>Cordialement,<br>Le Système de gestion des prêts de matériels</p>
                 </body>
                 </html>";
 

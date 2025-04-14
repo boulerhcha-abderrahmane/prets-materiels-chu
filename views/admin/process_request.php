@@ -215,7 +215,7 @@ try {
             $messageHtml .= "Pour plus d'informations, veuillez contacter le service de gestion des prêts.";
         }
         
-        $messageHtml .= "<br><br>Cordialement,<br>Le Service de Gestion des Prêts";
+        $messageHtml .= "<br><br>Cordialement,<br>Le Systeme de Gestion des Prêts de materiels";
         
         // Envoi de l'email
         $emailResult = $emailService->sendEmail($user['email'], $subject, $messageHtml);

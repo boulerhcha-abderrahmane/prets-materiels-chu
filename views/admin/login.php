@@ -93,7 +93,7 @@ $loginMessage = processLogin($pdo);
         }
 
         .form-control {
-            border: 2px solid var(--border-color);
+            border: 2px solid #ccc;
             border-radius: 16px;
             padding: 14px 18px;
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -101,7 +101,7 @@ $loginMessage = processLogin($pdo);
         }
 
         .form-control:focus {
-            border-color: var(--accent-color);
+            border-color: #3498db;
             box-shadow: 0 0 0 4px rgba(41, 98, 255, 0.1);
             transform: translateY(-2px);
         }
@@ -275,7 +275,7 @@ $loginMessage = processLogin($pdo);
                                        id="loginEmail" 
                                        name="email" 
                                        required
-                                       placeholder="exemple@gmail.com"
+                                       placeholder="exemple@domaine.com"
                                        autocomplete="email">
                                 <div class="invalid-feedback">Veuillez entrer une adresse email valide.</div>
                             </div>

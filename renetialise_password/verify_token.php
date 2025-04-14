@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            background: linear-gradient(135deg,rgb(15, 83, 139), #3498db);
             min-height: 100vh;
             display: flex;
             align-items: center;

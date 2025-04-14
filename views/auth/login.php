@@ -43,17 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="assets/logo/logo-chu.png" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     <style>
-           :root {
-            --primary-color:#2c82c9; /* Bleu professionnel plus foncé */
-            --secondary-color: #2c82c9; /* Bleu secondaire */
-            --accent-color: #2c82c9; /* Bleu accent */
-            --success-color: #28a745; /* Vert pour les messages de succès */
-            --danger-color: #dc3545; /* Rouge pour les erreurs */
-            --warning-color: #ffc107; /* Jaune pour les avertissements */
-            --text-color: #333333; /* Texte principal */
-            --text-light: #6c757d; /* Texte secondaire */
-            --border-color: #e0e0e0; /* Bordures */
-            --background-color: #f8f9fa; /* Fond clair */
+        :root {
+            --primary-color: rgb(30, 74, 117);
+            --primary-dark: rgb(23, 133, 207);
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --danger-color: #dc2626;
+            --background-start: rgb(234, 239, 245);
+            --background-end: rgb(239, 244, 248);
+            --shadow-color: rgba(0, 0, 0, 0.1);
         }
 
         body {
@@ -260,14 +258,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h1 class="text-center mb-4">interface utilisateur</h1>
                         <form id="loginFormElement">
                             <div class="mb-3">
-                                <label for="loginEmail" class="form-label">Email professionnel</label>
-                                <input type="email" class="form-control" id="loginEmail" required>
+                                <label for="loginEmail" class="form-label"><i class="fas fa-envelope me-2"></i>Email professionnel</label>
+                                <input type="email" class="form-control" id="loginEmail" placeholder="exemple@domaine.com" required>
                                 <div class="invalid-feedback">Veuillez entrer une adresse email valide.</div>
                             </div>
                             <div class="mb-3">
-                                <label for="loginPassword" class="form-label">Mot de passe</label>
+                                <label for="loginPassword" class="form-label"><i class="fas fa-lock me-2"></i>Mot de passe</label>
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="loginPassword" required>
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Votre mot de passe" required>
                                     <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('loginPassword')">
                                         <i class="fas fa-eye"></i>
                                     </button>
