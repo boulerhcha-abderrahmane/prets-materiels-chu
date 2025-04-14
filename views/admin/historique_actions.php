@@ -8,6 +8,23 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+// Paramètres de pagination
+$items_per_page = 10; // Nombre d'entrées par page
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$current_page = max(1, $current_page); // Assurez-vous que la page est au moins 1
+
+// Récupérer tous les administrateurs pour le filtre
+$sql_admins = "SELECT id_admin, nom, prenom FROM administrateur ORDER BY nom, prenom";
+$stmt_admins = $pdo->query($sql_admins);
+$all_admins = $stmt_admins->fetchAll(PDO::FETCH_ASSOC);
+
+// Initialiser les filtres
+$date_debut = isset($_GET['date_debut']) ? $_GET['date_debut'] : '';
+$date_fin = isset($_GET['date_fin']) ? $_GET['date_fin'] : '';
+$search_keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
+$admin_filter = isset($_GET['admin_id']) ? (int)$_GET['admin_id'] : 0;
+$selected_category = isset($_GET['category']) ? $_GET['category'] : '';
+
 // Afficher la structure de la table
 $sql_structure = "DESCRIBE historique_actions";
 $result_structure = $pdo->query($sql_structure);
@@ -104,16 +121,88 @@ $grouped_actions = [
     ]
 ];
 
-// Récupérer toutes les actions
+// Construire la requête SQL avec les filtres
 $sql = "SELECT 
     ha.*,
     a.nom as admin_nom,
     a.prenom as admin_prenom
 FROM historique_actions ha
 LEFT JOIN administrateur a ON ha.id_admin = a.id_admin
-ORDER BY ha.date_action DESC";
+WHERE 1=1";
 
+$params = [];
+
+// Ajouter les filtres à la requête
+if (!empty($date_debut)) {
+    $sql .= " AND DATE(ha.date_action) >= :date_debut";
+    $params[':date_debut'] = $date_debut;
+}
+
+if (!empty($date_fin)) {
+    $sql .= " AND DATE(ha.date_action) <= :date_fin";
+    $params[':date_fin'] = $date_fin;
+}
+
+if (!empty($search_keyword)) {
+    $sql .= " AND (ha.details LIKE :keyword OR ha.type_action LIKE :keyword OR a.nom LIKE :keyword OR a.prenom LIKE :keyword)";
+    $params[':keyword'] = '%' . $search_keyword . '%';
+}
+
+if ($admin_filter > 0) {
+    $sql .= " AND ha.id_admin = :admin_id";
+    $params[':admin_id'] = $admin_filter;
+}
+
+if (!empty($selected_category)) {
+    $category_types = [];
+    if ($selected_category === 'administrateur') {
+        $category_types = ['ajout_admin', 'modification_admin', 'suppression_admin'];
+    } elseif ($selected_category === 'utilisateur') {
+        $category_types = ['ajout_utilisateur', 'modification_utilisateur', 'suppression_utilisateur'];
+    } elseif ($selected_category === 'materiel') {
+        $category_types = ['ajout_materiel', 'modification_materiel', 'suppression_materiel'];
+    } elseif ($selected_category === 'demandes') {
+        $category_types = ['validation_demande', 'refus_demande', 'validation_retour'];
+    } elseif ($selected_category === 'email') {
+        $category_types = ['ajout_email', 'suppression_email'];
+    }
+    
+    if (!empty($category_types)) {
+        $type_placeholders = [];
+        foreach ($category_types as $i => $type) {
+            $param_name = ":type_" . $i;
+            $type_placeholders[] = $param_name;
+            $params[$param_name] = $type;
+        }
+        $sql .= " AND ha.type_action IN (" . implode(', ', $type_placeholders) . ")";
+    }
+}
+
+// Compter le nombre total d'actions pour la pagination
+$count_sql = str_replace("SELECT ha.*, a.nom as admin_nom, a.prenom as admin_prenom", "SELECT COUNT(*) as count", $sql);
+$stmt_count = $pdo->prepare($count_sql);
+foreach ($params as $key => $value) {
+    $stmt_count->bindValue($key, $value);
+}
+$stmt_count->execute();
+$total_items = $stmt_count->fetch(PDO::FETCH_ASSOC)['count'];
+$total_pages = ceil($total_items / $items_per_page);
+
+// Limiter les résultats pour la pagination
+$offset = ($current_page - 1) * $items_per_page;
+$sql .= " ORDER BY ha.date_action DESC LIMIT :offset, :limit";
+$params[':offset'] = $offset;
+$params[':limit'] = $items_per_page;
+
+// Exécuter la requête
 $stmt = $pdo->prepare($sql);
+foreach ($params as $key => $value) {
+    if ($key === ':offset' || $key === ':limit') {
+        $stmt->bindValue($key, $value, PDO::PARAM_INT);
+    } else {
+        $stmt->bindValue($key, $value);
+    }
+}
 $stmt->execute();
 $actions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -159,6 +248,7 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             min-height: 100vh;
             padding-top: 20px;
             width: calc(100% - 250px);
+            transition: all 0.3s ease;
         }
 
         .container-fluid {
@@ -169,48 +259,95 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
         .filter-card {
             background: white;
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .filter-card h5 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        
+        .filter-form-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .filter-form-container.show {
+            max-height: 300px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            letter-spacing: 0.3px;
+            font-size: 0.9rem;
         }
 
         .action-card {
             width: 100%;
-            height: 200px;  /* Hauteur fixe pour toutes les cartes */
+            height: 100%;
             display: flex;
             flex-direction: column;
             background: white;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #eee;
-            transition: transform 0.2s ease;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.25s ease;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
         }
 
         .action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .action-header {
             flex: 0 0 60px;  /* Hauteur fixe pour l'en-tête */
             padding: 15px 20px;
-            border-bottom: 1px solid #eee;
-            background-color: #f8f9fa;
-            border-radius: 10px 10px 0 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            background-color: #f8f9fd;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
         }
 
         .action-body {
             flex: 1;
-            padding: 15px 20px;
+            padding: 18px 22px;
             overflow-y: auto;  /* Ajouter un défilement si le contenu est trop long */
+            line-height: 1.6;
         }
 
         .action-type {
             font-weight: 600;
-            font-size: 0.9rem;
-            padding: 6px 12px;
+            font-size: 0.95rem;
+            padding: 8px 14px;
             border-radius: 20px;
             background: #f8f9fa;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .action-date {
@@ -229,147 +366,60 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             line-height: 1.5;
         }
 
-        /* Types d'actions */
-        .validation { border-left: 4px solid #4CAF50; }
-        .validation .action-type { color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
-        
-        .refus { border-left: 4px solid #f44336; }
-        .refus .action-type { color: #f44336; background: rgba(244, 67, 54, 0.1); }
-        
-        .retour { border-left: 4px solid #2196F3; }
-        .retour .action-type { color: #2196F3; background: rgba(33, 150, 243, 0.1); }
-        
-        .materiel { border-left: 4px solid #FF9800; }
-        .materiel .action-type { color: #FF9800; background: rgba(255, 152, 0, 0.1); }
-        
-        .email { border-left: 4px solid #9C27B0; }
-        .email .action-type { color: #9C27B0; background: rgba(156, 39, 176, 0.1); }
-        
-        .utilisateur { border-left: 4px solid #00BCD4; }
-        .utilisateur .action-type { color: #00BCD4; background: rgba(0, 188, 212, 0.1); }
-
-        /* Formulaire */
-        .form-control, .form-select {
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            padding: 10px 15px;
-        }
-
-        .form-control:focus, .form-select:focus {
-            box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.1);
-            border-color: #2c3e50;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .btn-primary {
-            background: #2c3e50;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #34495e;
-        }
-
-        .btn-outline-secondary {
-            border-color: #e9ecef;
-            color: #6c757d;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #343a40;
-        }
-
-        .section-card {
-            background: white;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            width: 80%;
-            margin: 0 auto 30px;
-        }
-
-        .section-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            border-radius: 15px 15px 0 0;
-            position: relative;
-        }
-
-        .section-body {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            max-width: 100%;
-        }
-
-        .action-card {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #eee;
-            transition: transform 0.2s ease;
-        }
-
-        .action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .action-header {
-            padding: 15px 20px;
-            width: 100%;
-            border-bottom: 1px solid #eee;
-            background-color: #f8f9fa;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .action-body {
-            padding: 15px 20px;
-            width: 100%;
-        }
-
-        .action-type {
-            font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-        }
-
         /* Styles spécifiques par type d'action */
-        .type-ajout { background: rgba(76, 175, 80, 0.1); color: #4CAF50; }
-        .type-modification { background: rgba(33, 150, 243, 0.1); color: #2196F3; }
-        .type-suppression { background: rgba(244, 67, 54, 0.1); color: #f44336; }
-        .type-validation { background: rgba(76, 175, 80, 0.1); color: #4CAF50; }
-        .type-refus { background: rgba(244, 67, 54, 0.1); color: #f44336; }
-        .type-retour { background: rgba(33, 150, 243, 0.1); color: #2196F3; }
+        .type-ajout { 
+            background: rgba(76, 175, 80, 0.1); 
+            color: #4CAF50; 
+            box-shadow: 0 2px 5px rgba(76, 175, 80, 0.1);
+        }
+        .type-modification { 
+            background: rgba(33, 150, 243, 0.1); 
+            color: #2196F3; 
+            box-shadow: 0 2px 5px rgba(33, 150, 243, 0.1);
+        }
+        .type-suppression { 
+            background: rgba(244, 67, 54, 0.1); 
+            color: #f44336; 
+            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.1);
+        }
+        .type-validation { 
+            background: rgba(76, 175, 80, 0.1); 
+            color: #4CAF50; 
+            box-shadow: 0 2px 5px rgba(76, 175, 80, 0.1);
+        }
+        .type-refus { 
+            background: rgba(244, 67, 54, 0.1); 
+            color: #f44336; 
+            box-shadow: 0 2px 5px rgba(244, 67, 54, 0.1);
+        }
+        .type-retour { 
+            background: rgba(33, 150, 243, 0.1); 
+            color: #2196F3; 
+            box-shadow: 0 2px 5px rgba(33, 150, 243, 0.1);
+        }
 
         .subtype-section {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 3px 15px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .subtype-section:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
         }
 
         .subtype-title {
             font-size: 1.1rem;
             color: #2c3e50;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .nav-buttons {
@@ -378,14 +428,20 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             z-index: 100;
             background: white;
             border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 18px 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-buttons:hover {
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
         }
 
         .category-btn {
             min-width: 160px;
-            padding: 12px 20px;
+            padding: 12px 22px;
             font-weight: 500;
             transition: all 0.3s ease;
             border-radius: 10px;
@@ -394,6 +450,8 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             background-color: #f0f2f5;
             color: #495057;
             border: none;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .category-btn:hover {
@@ -405,6 +463,7 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
         .category-btn.active {
             background: linear-gradient(135deg, #2c3e50, #3498db);
             color: white;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
         }
 
         .category-section {
@@ -426,26 +485,113 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             justify-content: center;
             gap: 10px !important;
         }
+
+        .section-card {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            width: 85%;
+            margin: 0 auto 35px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            padding: 22px 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(44, 62, 80, 0.1);
+        }
+        
+        .section-header h3 {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-body {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 100%;
+        }
+
+        .page-title {
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+            padding-bottom: 15px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(44, 62, 80, 0.1);
+        }
+
+        .delete-all-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            top: 22px;
+            right: 25px;
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.2);
+            letter-spacing: 0.3px;
+        }
+        
+        .delete-all-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
         
         .delete-btn {
             color: #dc3545;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             background: none;
             border: none;
-            padding: 5px;
-            border-radius: 5px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .delete-btn:hover {
             background-color: rgba(220, 53, 69, 0.1);
-            transform: scale(1.1);
-        }
-        
-        .action-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 3px 8px rgba(220, 53, 69, 0.1);
         }
         
         .action-header-content {
@@ -460,48 +606,75 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
             margin: 0;
         }
 
-        .page-title {
-            font-weight: 600;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        .page-title:after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 3px;
-        }
-
-        .delete-all-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        .pagination {
+            margin-top: 2rem;
         }
         
-        .delete-all-btn:hover {
-            background-color: #c82333;
+        .pagination .page-link {
+            border-radius: 8px;
+            margin: 0 3px;
+            color: #2c3e50;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: #e9ecef;
             transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.2);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            border-color: #3498db;
+            color: white;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #34495e, #2980b9);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-outline-secondary {
+            border-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #343a40;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.1);
+            border-color: #2c3e50;
         }
     </style>
 </head>
@@ -509,6 +682,59 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
     <?php include '../../includes/sidebar.php'; ?>
     <div class="content-wrapper">
         <div class="container-fluid">
+            <!-- Ajout des filtres -->
+            <div class="filter-card mb-4">
+                <h5 class="mb-3" id="filterToggle"><i class="fas fa-filter me-2"></i>Filtres <i class="fas fa-chevron-down ms-2"></i></h5>
+                <div class="filter-form-container" id="filterFormContainer">
+                    <form method="GET" class="row g-2">
+                        <div class="col-md-3">
+                            <label for="date_debut" class="form-label">Date de début</label>
+                            <input type="text" class="form-control datepicker" id="date_debut" name="date_debut" value="<?= htmlspecialchars($date_debut) ?>" placeholder="YYYY-MM-DD">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_fin" class="form-label">Date de fin</label>
+                            <input type="text" class="form-control datepicker" id="date_fin" name="date_fin" value="<?= htmlspecialchars($date_fin) ?>" placeholder="YYYY-MM-DD">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="admin_id" class="form-label">Administrateur</label>
+                            <select class="form-select" id="admin_id" name="admin_id">
+                                <option value="0">Tous les administrateurs</option>
+                                <?php foreach ($all_admins as $admin): ?>
+                                    <option value="<?= $admin['id_admin'] ?>" <?= $admin_filter == $admin['id_admin'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($admin['nom'] . ' ' . $admin['prenom']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="keyword" class="form-label">Recherche par mot-clé</label>
+                            <input type="text" class="form-control" id="keyword" name="keyword" value="<?= htmlspecialchars($search_keyword) ?>" placeholder="Rechercher...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Catégorie</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">Toutes les catégories</option>
+                                <option value="utilisateur" <?= $selected_category === 'utilisateur' ? 'selected' : '' ?>>Utilisateurs</option>
+                                <option value="materiel" <?= $selected_category === 'materiel' ? 'selected' : '' ?>>Matériel</option>
+                                <option value="demandes" <?= $selected_category === 'demandes' ? 'selected' : '' ?>>Demandes</option>
+                                <option value="email" <?= $selected_category === 'email' ? 'selected' : '' ?>>Emails</option>
+                                <option value="administrateur" <?= $selected_category === 'administrateur' ? 'selected' : '' ?>>Administrateurs</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Filtrer
+                                </button>
+                                <button type="reset" class="btn btn-outline-secondary" onclick="window.location.href='historique_actions.php'">
+                                    <i class="fas fa-undo me-2"></i>Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <h2 class="page-title">Historique des Actions</h2>
 
             <!-- Bouton de suppression globale -->
@@ -714,6 +940,75 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
                     </div>
                 <?php endforeach; ?>
             </div>
+
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+            <div class="d-flex justify-content-center mt-4 mb-4">
+                <nav aria-label="Pagination de l'historique">
+                    <ul class="pagination">
+                        <?php if ($current_page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $current_page - 1 ?><?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['page' => ''])) : '' ?>" aria-label="Précédent">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        <?php else: ?>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php
+                        // Déterminer les pages à afficher
+                        $start_page = max(1, $current_page - 2);
+                        $end_page = min($total_pages, $current_page + 2);
+                        
+                        // Afficher un lien vers la première page si nécessaire
+                        if ($start_page > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['page' => ''])) : '' ?>">1</a>
+                            </li>
+                            <?php if ($start_page > 2): ?>
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                            <li class="page-item <?= $i === $current_page ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?><?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['page' => ''])) : '' ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php 
+                        // Afficher un lien vers la dernière page si nécessaire
+                        if ($end_page < $total_pages): ?>
+                            <?php if ($end_page < $total_pages - 1): ?>
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            <?php endif; ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $total_pages ?><?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['page' => ''])) : '' ?>"><?= $total_pages ?></a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if ($current_page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $current_page + 1 ?><?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['page' => ''])) : '' ?>" aria-label="Suivant">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        <?php else: ?>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -790,14 +1085,77 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
     <script>
         let categoryToDelete = ''; // Variable globale pour stocker la catégorie à supprimer
         let actionIdToDelete = null; // Variable globale pour stocker l'ID de l'action à supprimer
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Afficher la première section par défaut
-            document.getElementById('utilisateur-section').classList.add('active');
-
+            // Gérer le toggle des filtres
+            const filterToggle = document.getElementById('filterToggle');
+            const filterFormContainer = document.getElementById('filterFormContainer');
+            
+            // Déterminer si les filtres sont actifs pour décider d'afficher ou non la section par défaut
+            const hasActiveFilters = <?= (!empty($date_debut) || !empty($date_fin) || !empty($search_keyword) || $admin_filter > 0 || !empty($selected_category)) ? 'true' : 'false' ?>;
+            
+            if (hasActiveFilters) {
+                filterFormContainer.classList.add('show');
+            }
+            
+            filterToggle.addEventListener('click', function() {
+                filterFormContainer.classList.toggle('show');
+                const icon = this.querySelector('.fa-chevron-down');
+                icon.classList.toggle('fa-rotate-180');
+            });
+            
+            // Activer le bon bouton de catégorie si un filtre de catégorie est actif
+            const selectedCategory = '<?= $selected_category ?>';
+            if (selectedCategory) {
+                // Désactiver tous les boutons de catégorie
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Cacher toutes les sections
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Trouver et activer le bouton correspondant à la catégorie filtrée
+                const categoryBtn = document.querySelector(`.category-btn[data-category="${selectedCategory}"]`);
+                if (categoryBtn) {
+                    categoryBtn.classList.add('active');
+                    
+                    // Afficher la section correspondante
+                    const categorySection = document.getElementById(`${selectedCategory}-section`);
+                    if (categorySection) {
+                        categorySection.classList.add('active');
+                    }
+                }
+            } else {
+                // Si aucune catégorie n'est sélectionnée, afficher la section utilisateur par défaut
+                document.getElementById('utilisateur-section').classList.add('active');
+                document.querySelector('.category-btn[data-category="utilisateur"]').classList.add('active');
+            }
+            
+            // Soumettre automatiquement le formulaire quand la catégorie change dans le select
+            const categorySelect = document.getElementById('category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    this.form.submit();
+                });
+            }
+            
+            // Initialiser Flatpickr pour les sélecteurs de date
+            flatpickr.localize(flatpickr.l10ns.fr);
+            flatpickr(".datepicker", {
+                dateFormat: "Y-m-d",
+                allowInput: true,
+                altInput: true,
+                altFormat: "d/m/Y",
+                maxDate: "today"
+            });
+            
             // Gérer les clics sur les boutons
             document.querySelectorAll('.category-btn').forEach(button => {
                 button.addEventListener('click', function() {
@@ -816,17 +1174,19 @@ $types_actions = $pdo->query($sql_types)->fetchAll(PDO::FETCH_COLUMN);
 
                     // Afficher la section correspondante avec animation
                     const categoryId = this.dataset.category;
+                    
+                    // Synchroniser avec le select de catégorie dans les filtres
+                    const categorySelect = document.getElementById('category');
+                    if (categorySelect) {
+                        categorySelect.value = categoryId;
+                    }
+                    
                     setTimeout(() => {
                         document.getElementById(categoryId + '-section').classList.add('active');
                     }, 50);
                 });
             });
 
-            flatpickr(".datepicker", {
-                dateFormat: "Y-m-d",
-                locale: "fr"
-            });
-            
             // Initialiser les modals
             const deleteModal = document.getElementById('deleteConfirmModal');
             const deleteSingleModal = document.getElementById('deleteSingleConfirmModal');
