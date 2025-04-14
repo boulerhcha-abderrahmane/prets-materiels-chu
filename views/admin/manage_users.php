@@ -76,12 +76,20 @@ require_once '../../config/config.php';
                 <?php
                 // Récupérer tous les utilisateurs de la base de données avec leurs emails
                 $stmt = $pdo->query("
-                    SELECT u.id_utilisateur, u.nom, u.prenom, e.email, u.role, u.mot_de_passe, u.date_creation,
+                    SELECT DISTINCT u.id_utilisateur, u.nom, u.prenom, e.email, u.role, u.mot_de_passe, u.date_creation,
                            ha.id_admin, a.nom as admin_nom, a.prenom as admin_prenom 
                     FROM utilisateur u 
                     JOIN email_autorise e ON u.id_email = e.id_email
-                    LEFT JOIN historique_actions ha ON u.id_utilisateur = ha.id_utilisateur AND ha.type_action = 'AJOUT_UTILISATEUR'
-                    LEFT JOIN administrateur a ON ha.id_admin = a.id_admin");
+                    LEFT JOIN (
+                        SELECT id_admin, details, id_utilisateur, date_action
+                        FROM historique_actions 
+                        WHERE type_action = 'AJOUT_UTILISATEUR'
+                        GROUP BY id_utilisateur
+                    ) ha ON ha.details LIKE CONCAT('%Nom: ', u.nom, '%') 
+                        AND ha.details LIKE CONCAT('%Prénom: ', u.prenom, '%')
+                        AND ha.details LIKE CONCAT('%Email: ', e.email, '%')
+                    LEFT JOIN administrateur a ON ha.id_admin = a.id_admin
+                    ORDER BY u.date_creation DESC");
 
                 while ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo "<li class='list-group-item d-flex justify-content-between align-items-center'>
@@ -92,7 +100,7 @@ require_once '../../config/config.php';
                                 htmlspecialchars($user['mot_de_passe']) . "
                                 <small class='text-muted d-block'>
                                     Ajouté par: " . 
-                                    ($user['admin_nom'] ? htmlspecialchars($user['admin_nom'] . ' ' . $user['admin_prenom']) : 'N/A') . 
+                                    ($user['admin_nom'] ? "<strong>" . htmlspecialchars($user['admin_nom'] . ' ' . $user['admin_prenom']) . "</strong>" : 'N/A') . 
                                     " le " . 
                                     ($user['date_creation'] ? date('d/m/Y H:i', strtotime($user['date_creation'])) : 'N/A') . 
                                 "</small>
