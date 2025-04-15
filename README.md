@@ -1,6 +1,69 @@
-# Système de Prêt de Matériel
+# Application de Gestion de Prêts de Matériels
 
-Ce projet est une application web de gestion des prêts de matériel.
+Cette application permet de gérer les prêts de matériels au sein d'une organisation.
+
+## Configuration requise
+- PHP 7.4 ou supérieur
+- MySQL 5.7 ou supérieur
+- Serveur web (Apache, Nginx)
+- XAMPP (recommandé pour l'installation rapide)
+
+## Installation
+
+### 1. Configuration de la base de données
+
+#### Option 1 : Via PHPMyAdmin
+1. Démarrez XAMPP Control Panel et activez les services Apache et MySQL
+2. Ouvrez PHPMyAdmin dans votre navigateur (http://localhost/phpmyadmin)
+3. Créez une nouvelle base de données nommée "prets_materiels"
+4. Sélectionnez cette base de données, puis allez dans l'onglet "Importer"
+5. Cliquez sur "Parcourir" et sélectionnez le fichier `database.sql`
+6. Cliquez sur "Exécuter"
+
+#### Option 2 : Via la ligne de commande
+1. Ouvrez une fenêtre de terminal
+2. Naviguez vers le répertoire du projet
+3. Exécutez la commande :
+   ```
+   mysql -u root -p < database.sql
+   ```
+4. Entrez votre mot de passe MySQL si demandé
+
+### 2. Configuration de l'application
+1. Créez ou modifiez le fichier `config/config.php` pour y mettre vos paramètres de connexion à la base de données :
+   ```php
+   <?php
+   $host = 'localhost';
+   $dbname = 'prets_materiels';
+   $username = 'root';
+   $password = ''; // Laissez vide si vous utilisez XAMPP avec la configuration par défaut
+   
+   try {
+       $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+       $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+       $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+   } catch (PDOException $e) {
+       die("Erreur de connexion à la base de données: " . $e->getMessage());
+   }
+   ?>
+   ```
+
+### 3. Accès à l'application
+1. Accédez à l'application via l'URL : http://localhost/prets_materiels
+2. Connectez-vous avec les identifiants par défaut :
+   - Email : admin@prets-materiels.fr
+   - Mot de passe : admin123
+
+## Structure des dossiers
+- `config/` : Fichiers de configuration
+- `assets/` : Ressources statiques (CSS, JS, images)
+- `includes/` : Composants réutilisables
+- `views/` : Pages de l'application
+- `uploads/` : Dossier pour les photos de matériels
+
+## Sécurité
+- Changez le mot de passe administrateur par défaut après la première connexion
+- Assurez-vous que le dossier `uploads/` a les permissions appropriées (755)
 
 ## Prérequis
 
