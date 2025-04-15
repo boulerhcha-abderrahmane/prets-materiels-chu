@@ -40,6 +40,7 @@ try {
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets../../../../assets/css/sidebar.css">
+    <style></style>
 </head>
 <body>
     <!-- Menu hamburger -->

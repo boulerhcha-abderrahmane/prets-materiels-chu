@@ -82,6 +82,8 @@ if (isset($_SESSION['status_message'])) {
             outline: none;
             border-color: #0d6efd !important;
         }
+        /* Variables CSS */
+
     </style>
 </head>
 <br><br>
