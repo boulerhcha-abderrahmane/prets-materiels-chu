@@ -21,43 +21,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Utiliser la nouvelle approche avec l'attribut inert
+    // Améliorer la gestion des modals
     const modals = document.querySelectorAll('.modal');
     
     modals.forEach(modal => {
         // Quand le modal s'ouvre
         modal.addEventListener('show.bs.modal', function() {
-            // S'assurer que l'attribut aria-hidden n'est pas appliqué
             this.setAttribute('aria-hidden', 'false');
-        });
-        
-        // Quand le modal se ferme
-        modal.addEventListener('hide.bs.modal', function() {
-            // Utiliser inert plutôt que aria-hidden
-            this.inert = true;
-            
-            // Retirer inert après l'animation
-            setTimeout(() => {
-                this.inert = false;
-            }, 500); // Duration de l'animation du modal
         });
     });
     
-    // Transférer le focus de manière sûre
+    // Améliorer la gestion des boutons de fermeture des modals
     document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
         btn.addEventListener('click', function() {
-            // Déplacer le focus vers un élément sûr (non masqué)
-            setTimeout(() => {
-                document.querySelector('body').focus();
-            }, 150);
+            const modalElement = this.closest('.modal');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+            }
         });
     });
 
     // Initialiser les boutons de détails
     initDetailsButtons();
-    
-    // Initialiser les événements de survol
-    initHoverEffects();
 });
 
 /**
@@ -73,44 +61,14 @@ function initDashboard() {
 
 /**
  * Initialise les effets de survol pour les lignes de demande
+ * Cette fonction n'est plus utilisée pour respecter le comportement souhaité
+ * où les modals s'ouvrent uniquement au clic et non au survol
  */
 function initHoverEffects() {
+    // Fonction conservée mais non appelée
     const rows = document.querySelectorAll('.request-row');
     
     rows.forEach(row => {
-        // Variables pour gérer le délai
-        let hoverTimer;
-        let modal;
-        
-        // Récupérer l'ID du modal associé
-        const modalId = row.getAttribute('data-bs-target').substring(1);
-        
-        // Événement au survol
-        row.addEventListener('mouseenter', function() {
-            // Attendre un court délai avant d'ouvrir le modal (pour éviter les ouvertures accidentelles)
-            hoverTimer = setTimeout(() => {
-                modal = new bootstrap.Modal(document.getElementById(modalId));
-                
-                // Ajouter une transition fluide au modal
-                const modalElement = document.getElementById(modalId);
-                if (modalElement) {
-                    modalElement.addEventListener('shown.bs.modal', function onShown() {
-                        const modalContent = this.querySelector('.modal-content');
-                        modalContent.style.animation = 'modalFadeIn 0.3s forwards';
-                        this.removeEventListener('shown.bs.modal', onShown);
-                    }, { once: true });
-                }
-                
-                modal.show();
-            }, 500); // 500ms de délai avant l'ouverture
-        });
-        
-        // Événement à la sortie du survol
-        row.addEventListener('mouseleave', function() {
-            // Annuler le timer si on quitte la ligne avant le délai
-            clearTimeout(hoverTimer);
-        });
-        
         // Empêcher que le clic sur les boutons n'ouvre le modal
         row.querySelectorAll('button, .form-control').forEach(element => {
             element.addEventListener('click', function(e) {
@@ -138,7 +96,7 @@ function initDetailsButtons() {
                 
                 modalElement.addEventListener('shown.bs.modal', function onShown() {
                     // Animer les éléments internes un par un
-                    const items = this.querySelectorAll('.mb-3');
+                    const items = this.querySelectorAll('.mb-3, .info-group');
                     items.forEach((item, index) => {
                         setTimeout(() => {
                             item.style.opacity = '1';
@@ -150,7 +108,7 @@ function initDetailsButtons() {
                 }, { once: true });
                 
                 // Préparer les éléments pour l'animation
-                const items = modalElement.querySelectorAll('.mb-3');
+                const items = modalElement.querySelectorAll('.mb-3, .info-group');
                 items.forEach(item => {
                     item.style.opacity = '0';
                     item.style.transform = 'translateY(20px)';
@@ -158,6 +116,19 @@ function initDetailsButtons() {
                 });
                 
                 modal.show();
+            }
+        });
+    });
+    
+    // S'assurer que les boutons de fermeture fonctionnent correctement
+    document.querySelectorAll('.modal .btn-close, .modal .btn-secondary').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modalElement = this.closest('.modal');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
             }
         });
     });
@@ -224,6 +195,13 @@ function attachEventListeners() {
         button.onclick = function() {
             return setComment(this);
         };
+    });
+    
+    // S'assurer que les clics sur les boutons et les zones de texte ne propagent pas l'événement
+    document.querySelectorAll('.request-row button, .request-row .form-control').forEach(element => {
+        element.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     });
 }
 
