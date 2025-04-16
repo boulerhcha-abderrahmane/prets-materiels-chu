@@ -5,8 +5,7 @@
 .vscode/
 
 
-# Configuration files with sensitive information
-config/config.php
+
 
 # Logs files
 *.log
