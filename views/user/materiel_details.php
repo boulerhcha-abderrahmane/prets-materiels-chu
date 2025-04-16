@@ -91,7 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Validation du motif
+    if (!isset($_POST['motif']) || empty(trim($_POST['motif']))) {
+        $_SESSION['error'] = "Le motif de la demande est obligatoire.";
+        header("Location: materiel_details.php?id=" . $materiel['id_materiel']);
+        exit;
+    }
+
     $quantite = intval($_POST['quantite']);
+    $motif = trim($_POST['motif']);
     
     try {
         // Récupérer les emails des administrateurs avant la transaction
@@ -103,15 +111,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 1. Création de la demande
         $stmt = $pdo->prepare("
             INSERT INTO demande_pret (
-                id_utilisateur, id_materiel, quantite, date_demande, statut
-            ) VALUES (?, ?, ?, NOW(), 'en_attente')
+                id_utilisateur, id_materiel, quantite, motif, date_demande, statut
+            ) VALUES (?, ?, ?, ?, NOW(), 'en_attente')
         ");
         
-        if ($stmt->execute([$_SESSION['user_id'], $materiel['id_materiel'], $quantite])) {
+        if ($stmt->execute([$_SESSION['user_id'], $materiel['id_materiel'], $quantite, $motif])) {
             // 2. Créer notification pour les administrateurs
             $message_admin = "Nouvelle demande de prêt pour " . $quantite . " " . $materiel['nom'] . 
                            " (" . $materiel['type'] . ")\nDe : " . $_SESSION['nom'] . " " . $_SESSION['prenom'] . 
-                           "\n";
+                           "\nMotif : " . $motif . "\n";
             
             $stmt = $pdo->prepare("
                 INSERT INTO notification (message, type)
@@ -137,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messageHtml .= "📦 - Matériel : " . $materiel['nom'] . "<br>";
                 $messageHtml .= "🏷️ - Type : " . $materiel['type'] . "<br>";
                 $messageHtml .= "🔢 - Quantité : " . $quantite . "<br>";
+                $messageHtml .= "📝 - Motif : " . $motif . "<br>";
                 $messageHtml .= "Veuillez vous connecter au système pour traiter cette demande.<br><br>";
                 $messageHtml .=  "Cordialement,\nLe systeme de gestion des prêts de matériels ";
                 
@@ -215,11 +224,16 @@ unset($_SESSION['message']);
                                     <label for="quantite" class="form-label">Quantité à Emprunter</label>
                                     <input type="number" id="quantite" name="quantite" class="form-control" value="1" min="1" max="<?= $quantite_disponible ?>" required>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="motif" class="form-label">Motif de la demande</label>
+                                    <textarea id="motif" name="motif" class="form-control" style="width: 100%; max-width: 100%; height:50px;" required placeholder="Veuillez préciser le motif de votre demande de prêt"></textarea>
+                                </div>
                                 <button type="button" class="btn btn-primary" data-action="showConfirmation">Demander un Prêt</button>
                             </form>
 
                             <div id="confirmationPrompt">
                                 <p>Êtes-vous sûr de vouloir demander <span id="confirmationQuantite"></span> unité(s) de <span id="confirmationNom"></span> ?</p>
+                                <p><strong>Motif :</strong> <span id="confirmationMotif"></span></p>
                                 <button class="btn btn-success" data-action="submitForm">Oui</button>
                                 <button class="btn btn-danger" data-action="cancelRequest">Non</button>
                             </div>
@@ -280,6 +294,7 @@ unset($_SESSION['message']);
                 showConfirmationBtn.addEventListener('click', function() {
                     document.getElementById('confirmationQuantite').textContent = quantiteInput.value;
                     document.getElementById('confirmationNom').textContent = materielNom;
+                    document.getElementById('confirmationMotif').textContent = document.getElementById('motif').value;
                     confirmationPrompt.classList.add('show');
                 });
 

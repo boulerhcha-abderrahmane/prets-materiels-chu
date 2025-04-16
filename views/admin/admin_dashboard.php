@@ -59,7 +59,8 @@ try {
             d.quantite,
             d.date_demande,
             m.quantite_disponible,
-            u.id_utilisateur
+            u.id_utilisateur,
+            d.motif
         FROM demande_pret d 
         JOIN utilisateur u ON d.id_utilisateur = u.id_utilisateur 
         JOIN materiel m ON d.id_materiel = m.id_materiel 
@@ -164,9 +165,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                     <tr>
                         <th>Utilisateur</th>
                         <th>Matériel</th>
-                        <th>Type</th>
                         <th>Quantité</th>
-                        <th>Date</th>
                         <th>Message</th>
                         <th>Action</th>
                     </tr>
@@ -182,12 +181,17 @@ $activeAdmins = getActiveUsers($pdo, true);
                             $quantite_demande = $demande['quantite'];
                             $isQuantityAvailable = $quantite_demande <= $quantite_disponible;
                         ?>
-                            <tr class="<?= $isQuantityAvailable ? '' : 'table-warning' ?>">
+                            <tr class="<?= $isQuantityAvailable ? '' : 'table-warning' ?> request-row" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#detailsModal<?= htmlspecialchars($demande['id_demande']) ?>">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
-                                            <div class="fw-bold"><?= htmlspecialchars($demande['nom_utilisateur']) ?></div>
-                                            <div class="text-muted small"><?= htmlspecialchars($demande['prenom_utilisateur']) ?></div>
+                                            <div class="fw-bold"><?= htmlspecialchars($demande['nom_utilisateur'] . ' ' . $demande['prenom_utilisateur']) ?></div>
+                                            <div class="text-muted small mt-1">
+                                                <i class="far fa-calendar-alt"></i> <?= date('d/m/Y', strtotime($demande['date_demande'])) ?>
+                                                <i class="far fa-clock ms-2"></i> <?= date('H:i', strtotime($demande['date_demande'])) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -195,15 +199,10 @@ $activeAdmins = getActiveUsers($pdo, true);
                                     <div class="fw-bold"><?= htmlspecialchars($demande['nom_materiel']) ?></div>
                                     <div class="text-muted small">Disponible: <?= htmlspecialchars($quantite_disponible) ?></div>
                                 </td>
-                                <td><?= htmlspecialchars($demande['type_materiel'] ?? 'N/A') ?></td>
                                 <td>
                                     <span class="badge <?= $isQuantityAvailable ? 'bg-success' : 'bg-warning' ?>">
                                         <?= htmlspecialchars($demande['quantite']) ?>
                                     </span>
-                                </td>
-                                <td>
-                                    <div><?= date('d/m/Y', strtotime($demande['date_demande'])) ?></div>
-                                    <div class="text-muted small"><?= date('H:i', strtotime($demande['date_demande'])) ?></div>
                                 </td>
                                 <td>
                                     <textarea class="form-control comment-text" id="comment-<?= htmlspecialchars($demande['id_demande']) ?>" 
@@ -233,6 +232,56 @@ $activeAdmins = getActiveUsers($pdo, true);
                                         </button>
                                     </form>
                                 </td>
+                                
+                                <!-- Modal Détails -->
+                                <div class="modal fade" id="detailsModal<?= htmlspecialchars($demande['id_demande']) ?>" 
+                                     tabindex="-1" aria-labelledby="detailsModalLabel<?= htmlspecialchars($demande['id_demande']) ?>" 
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="detailsModalLabel<?= htmlspecialchars($demande['id_demande']) ?>">
+                                                    Détails de la demande
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="card">
+                                                    <div class="card-header bg-primary text-white">
+                                                        Informations de la demande #<?= htmlspecialchars($demande['id_demande']) ?>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Utilisateur:</h6>
+                                                            <p><?= htmlspecialchars($demande['nom_utilisateur'] . ' ' . $demande['prenom_utilisateur']) ?></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Matériel:</h6>
+                                                            <p><?= htmlspecialchars($demande['nom_materiel']) ?> (<?= htmlspecialchars($demande['type_materiel'] ?? 'N/A') ?>)</p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Quantité:</h6>
+                                                            <p><?= htmlspecialchars($demande['quantite']) ?> (Disponible: <?= htmlspecialchars($demande['quantite_disponible']) ?>)</p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Date de demande:</h6>
+                                                            <p><?= date('d/m/Y à H:i', strtotime($demande['date_demande'])) ?></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Motif de la demande:</h6>
+                                                            <div class="p-3 bg-light rounded">
+                                                                <?= !empty($demande['motif']) ? nl2br(htmlspecialchars($demande['motif'])) : '<em>Aucun motif spécifié</em>' ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

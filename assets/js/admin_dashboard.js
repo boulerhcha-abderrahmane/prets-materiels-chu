@@ -52,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 150);
         });
     });
+
+    // Initialiser les boutons de détails
+    initDetailsButtons();
+    
+    // Initialiser les événements de survol
+    initHoverEffects();
 });
 
 /**
@@ -63,6 +69,98 @@ function initDashboard() {
     
     // Attacher les écouteurs d'événements aux boutons
     attachEventListeners();
+}
+
+/**
+ * Initialise les effets de survol pour les lignes de demande
+ */
+function initHoverEffects() {
+    const rows = document.querySelectorAll('.request-row');
+    
+    rows.forEach(row => {
+        // Variables pour gérer le délai
+        let hoverTimer;
+        let modal;
+        
+        // Récupérer l'ID du modal associé
+        const modalId = row.getAttribute('data-bs-target').substring(1);
+        
+        // Événement au survol
+        row.addEventListener('mouseenter', function() {
+            // Attendre un court délai avant d'ouvrir le modal (pour éviter les ouvertures accidentelles)
+            hoverTimer = setTimeout(() => {
+                modal = new bootstrap.Modal(document.getElementById(modalId));
+                
+                // Ajouter une transition fluide au modal
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    modalElement.addEventListener('shown.bs.modal', function onShown() {
+                        const modalContent = this.querySelector('.modal-content');
+                        modalContent.style.animation = 'modalFadeIn 0.3s forwards';
+                        this.removeEventListener('shown.bs.modal', onShown);
+                    }, { once: true });
+                }
+                
+                modal.show();
+            }, 500); // 500ms de délai avant l'ouverture
+        });
+        
+        // Événement à la sortie du survol
+        row.addEventListener('mouseleave', function() {
+            // Annuler le timer si on quitte la ligne avant le délai
+            clearTimeout(hoverTimer);
+        });
+        
+        // Empêcher que le clic sur les boutons n'ouvre le modal
+        row.querySelectorAll('button, .form-control').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    });
+}
+
+/**
+ * Initialiser les boutons de détails et leurs modales
+ */
+function initDetailsButtons() {
+    // Ajouter une animation légère à l'ouverture des modales de détails
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('data-bs-target').substring(1);
+            const modalElement = document.getElementById(targetId);
+            
+            if (modalElement) {
+                e.preventDefault();
+                
+                // Animation améliorée à l'ouverture
+                const modal = new bootstrap.Modal(modalElement);
+                
+                modalElement.addEventListener('shown.bs.modal', function onShown() {
+                    // Animer les éléments internes un par un
+                    const items = this.querySelectorAll('.mb-3');
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 100 * (index + 1));
+                    });
+                    
+                    this.removeEventListener('shown.bs.modal', onShown);
+                }, { once: true });
+                
+                // Préparer les éléments pour l'animation
+                const items = modalElement.querySelectorAll('.mb-3');
+                items.forEach(item => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                });
+                
+                modal.show();
+            }
+        });
+    });
 }
 
 /**
@@ -85,6 +183,8 @@ function refreshRequests() {
                 
                 // Réattacher les événements aux nouveaux éléments
                 attachEventListeners();
+                // Réinitialiser les boutons de détails
+                initDetailsButtons();
             }
             
             // Mettre à jour les compteurs

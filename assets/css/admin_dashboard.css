@@ -8,6 +8,25 @@ body {
     padding: 15px;
 }
 
+/* User info styles */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-info .fw-bold {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.user-info .text-muted {
+    display: block;
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
 /* Top bar */
 .top-bar {
     display: flex;
@@ -190,6 +209,19 @@ body {
     resize: vertical;
 }
 
+/* Style pour la date sous l'utilisateur */
+.text-muted.small.mt-1 {
+    color: #6c757d;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.text-muted.small.mt-1 i {
+    color: #3498db;
+    width: 16px;
+    text-align: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1366px) {
     .main-content {
@@ -262,9 +294,7 @@ body {
     
     /* Réduit l'espace des colonnes moins importantes */
     .recent-requests th:nth-child(3), 
-    .recent-requests td:nth-child(3),
-    .recent-requests th:nth-child(5), 
-    .recent-requests td:nth-child(5) {
+    .recent-requests td:nth-child(3) {
         max-width: 80px;
         white-space: nowrap;
         overflow: hidden;
@@ -285,15 +315,6 @@ body {
     .recent-requests th, 
     .recent-requests td {
         padding: 10px 8px;
-    }
-    
-    /* Condensed view for Type column */
-    .recent-requests th:nth-child(3), 
-    .recent-requests td:nth-child(3) {
-        max-width: 80px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 }
 
@@ -338,6 +359,11 @@ body {
         display: none;
     }
     
+    /* Style pour la date en affichage mobile */
+    .text-muted.small.mt-1 {
+        font-size: 0.75em;
+    }
+    
     /* Compact form buttons */
     .btn-sm {
         padding: 0.25rem 0.5rem;
@@ -365,8 +391,8 @@ body {
     }
     
     /* Further simplify table for smallest screens */
-    .recent-requests th:nth-child(5), 
-    .recent-requests td:nth-child(5) {
+    .recent-requests th:nth-child(3), 
+    .recent-requests td:nth-child(3) {
         display: none;
     }
     
@@ -374,4 +400,352 @@ body {
     textarea.comment-text {
         min-height: 40px !important;
     }
+}
+
+/* Ajout de styles pour la cellule de motif */
+.motif-cell {
+    max-width: 250px;
+    min-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+    font-size: 0.9em;
+    padding: 5px 0;
+}
+
+/* Afficher le texte complet au survol */
+.motif-cell:hover {
+    white-space: normal;
+    overflow: visible;
+    background-color: #f8f9fa;
+    position: relative;
+    z-index: 100;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Styles améliorés pour le motif */
+.motif-cell {
+    max-width: 250px;
+    min-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.motif-cell:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.motif-cell i {
+    color: #3498db;
+    margin-right: 5px;
+}
+
+/* Styles pour le modal du motif */
+.motif-detail {
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-line;
+    margin-bottom: 0;
+}
+
+/* Amélioration du style du modal */
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    border-bottom: none;
+    color: white;
+    padding: 1.5rem;
+}
+
+.modal-header .modal-title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.modal-header .btn-close {
+    color: white;
+    opacity: 0.8;
+    filter: brightness(5);
+}
+
+.modal-body {
+    padding: 1.8rem;
+}
+
+.modal-footer {
+    background-color: #f8f9fa;
+    border-top: none;
+    padding: 1rem 1.5rem;
+}
+
+.modal-dialog {
+    margin-top: 3vh;
+}
+
+/* Styles améliorés pour la carte dans le modal */
+.modal-body .card {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.modal-body .card-header {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 0.8rem 1.2rem;
+    border-left: 4px solid #007bff;
+}
+
+.modal-body .card-body {
+    padding: 0;
+}
+
+.modal-body .mb-3 {
+    margin-bottom: 1.5rem !important;
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 1px dashed #e0e0e0;
+}
+
+.modal-body .mb-3:last-child {
+    margin-bottom: 0 !important;
+}
+
+.modal-body .mb-3::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #007bff;
+}
+
+.modal-body h6.fw-bold {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.modal-body h6.fw-bold::before {
+    font-family: 'Font Awesome 5 Free';
+    margin-right: 10px;
+    color: #007bff;
+    width: 20px;
+    text-align: center;
+}
+
+.modal-body h6.fw-bold:nth-of-type(1)::before {
+    content: '\f007'; /* icône utilisateur */
+}
+
+.modal-body h6.fw-bold:nth-of-type(2)::before {
+    content: '\f085'; /* icône matériel */
+}
+
+.modal-body h6.fw-bold:nth-of-type(3)::before {
+    content: '\f0ad'; /* icône quantité */
+}
+
+.modal-body h6.fw-bold:nth-of-type(4)::before {
+    content: '\f133'; /* icône date */
+}
+
+.modal-body h6.fw-bold:nth-of-type(5)::before {
+    content: '\f4ad'; /* icône motif */
+}
+
+.modal-body p {
+    color: #333;
+    margin-left: 1.8rem;
+    font-size: 0.95rem;
+}
+
+.modal-body .bg-light {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    font-style: italic;
+    margin-left: 1.8rem;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.modal-body .bg-light::before {
+    content: '\f10d';
+    font-family: 'Font Awesome 5 Free';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: white;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    border-radius: 50%;
+}
+
+/* Animation améliorée pour le modal */
+.modal.fade .modal-dialog {
+    transform: scale(0.95) translateY(-20px);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Bouton Fermer amélioré */
+.modal-footer .btn-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #ddd;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #e9ecef;
+    color: #212529;
+    border-color: #ced4da;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-body {
+        padding: 1.2rem;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body .mb-3 {
+        padding-left: 1rem;
+    }
+    
+    .modal-body p, .modal-body .bg-light {
+        margin-left: 1.2rem;
+    }
+    
+    .modal-body h6.fw-bold::before {
+        margin-right: 8px;
+    }
+}
+
+/* Styles pour le bouton de détails */
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    color: white;
+}
+
+/* Styles pour la carte dans la modale de détails */
+.modal-body .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.modal-body .card-header {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.modal-body .card-body {
+    padding: 1.5rem;
+}
+
+.modal-body .bg-light {
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    font-style: italic;
+}
+
+/* Animation pour les modales */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+/* Styles pour les titres dans les détails */
+.modal-body h6.fw-bold {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Style pour le texte du motif */
+.modal-body .bg-light {
+    white-space: pre-line;
+    line-height: 1.5;
+}
+
+/* Animation keyframes pour le modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation pour quand le modal s'affiche */
+.modal.show .modal-content {
+    animation: modalFadeIn 0.3s forwards;
+}
+
+/* Style pour les lignes survolables */
+.request-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.request-row:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
 } 
