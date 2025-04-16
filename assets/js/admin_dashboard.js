@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
+    // Désactiver l'ouverture automatique des modals sur les éléments non-boutons
+    restrictModalTriggers();
+
     // Améliorer la gestion des modals
     const modals = document.querySelectorAll('.modal');
     
@@ -49,6 +52,59 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
+ * Limite l'ouverture des modals uniquement aux boutons dédiés
+ */
+function restrictModalTriggers() {
+    // Retirer l'attribut data-bs-toggle de tous les éléments non-boutons
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(element => {
+        // Si ce n'est pas un bouton dédié, retirer l'attribut
+        if (!element.classList.contains('btn-modal') && 
+            !element.classList.contains('btn-details') && 
+            element.tagName !== 'BUTTON') {
+            
+            // Conserver la référence à quel modal devrait être ouvert
+            const targetModal = element.getAttribute('data-bs-target');
+            element.removeAttribute('data-bs-toggle');
+            
+            // Ajouter un bouton dédié si nécessaire
+            if (!element.querySelector('.btn-modal')) {
+                // Créer un bouton "Détails" à l'intérieur de l'élément
+                const detailsBtn = document.createElement('button');
+                detailsBtn.className = 'btn btn-sm btn-primary btn-modal ms-2';
+                detailsBtn.innerHTML = '<i class="fas fa-eye"></i> Détails';
+                detailsBtn.setAttribute('data-bs-toggle', 'modal');
+                detailsBtn.setAttribute('data-bs-target', targetModal);
+                detailsBtn.style.position = 'absolute';
+                detailsBtn.style.right = '10px';
+                detailsBtn.style.top = '50%';
+                detailsBtn.style.transform = 'translateY(-50%)';
+                
+                // Empêcher la propagation du clic sur le bouton
+                detailsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+                // Ajouter le bouton à l'élément
+                element.style.position = 'relative';
+                element.appendChild(detailsBtn);
+            }
+        }
+    });
+    
+    // S'assurer que les clics sur les lignes et autres éléments ne propagent pas l'événement
+    document.querySelectorAll('.request-row, .message-content, .message-item, .message-text, .action-container').forEach(element => {
+        element.addEventListener('click', function(e) {
+            // Vérifier si le clic vient d'un bouton dédié
+            if (!e.target.classList.contains('btn-modal') && 
+                !e.target.classList.contains('btn-details') && 
+                e.target.tagName !== 'BUTTON') {
+                e.stopPropagation();
+            }
+        });
+    });
+}
+
+/**
  * Initialisation des fonctionnalités du tableau de bord
  */
 function initDashboard() {
@@ -57,6 +113,9 @@ function initDashboard() {
     
     // Attacher les écouteurs d'événements aux boutons
     attachEventListeners();
+    
+    // Limiter l'ouverture des modals aux boutons dédiés
+    restrictModalTriggers();
 }
 
 /**
@@ -84,40 +143,46 @@ function initHoverEffects() {
 function initDetailsButtons() {
     // Ajouter une animation légère à l'ouverture des modales de détails
     document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('data-bs-target').substring(1);
-            const modalElement = document.getElementById(targetId);
+        // S'assurer que c'est un bouton ou un élément dédié
+        if (btn.classList.contains('btn-modal') || 
+            btn.classList.contains('btn-details') || 
+            btn.tagName === 'BUTTON') {
             
-            if (modalElement) {
-                e.preventDefault();
+            btn.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('data-bs-target').substring(1);
+                const modalElement = document.getElementById(targetId);
                 
-                // Animation améliorée à l'ouverture
-                const modal = new bootstrap.Modal(modalElement);
-                
-                modalElement.addEventListener('shown.bs.modal', function onShown() {
-                    // Animer les éléments internes un par un
-                    const items = this.querySelectorAll('.mb-3, .info-group');
-                    items.forEach((item, index) => {
-                        setTimeout(() => {
-                            item.style.opacity = '1';
-                            item.style.transform = 'translateY(0)';
-                        }, 100 * (index + 1));
+                if (modalElement) {
+                    e.preventDefault();
+                    
+                    // Animation améliorée à l'ouverture
+                    const modal = new bootstrap.Modal(modalElement);
+                    
+                    modalElement.addEventListener('shown.bs.modal', function onShown() {
+                        // Animer les éléments internes un par un
+                        const items = this.querySelectorAll('.mb-3, .info-group');
+                        items.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, 100 * (index + 1));
+                        });
+                        
+                        this.removeEventListener('shown.bs.modal', onShown);
+                    }, { once: true });
+                    
+                    // Préparer les éléments pour l'animation
+                    const items = modalElement.querySelectorAll('.mb-3, .info-group');
+                    items.forEach(item => {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                     });
                     
-                    this.removeEventListener('shown.bs.modal', onShown);
-                }, { once: true });
-                
-                // Préparer les éléments pour l'animation
-                const items = modalElement.querySelectorAll('.mb-3, .info-group');
-                items.forEach(item => {
-                    item.style.opacity = '0';
-                    item.style.transform = 'translateY(20px)';
-                    item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                });
-                
-                modal.show();
-            }
-        });
+                    modal.show();
+                }
+            });
+        }
     });
     
     // S'assurer que les boutons de fermeture fonctionnent correctement
@@ -156,6 +221,8 @@ function refreshRequests() {
                 attachEventListeners();
                 // Réinitialiser les boutons de détails
                 initDetailsButtons();
+                // Limiter l'ouverture des modals aux boutons dédiés
+                restrictModalTriggers();
             }
             
             // Mettre à jour les compteurs
@@ -203,6 +270,9 @@ function attachEventListeners() {
             e.stopPropagation();
         });
     });
+    
+    // Limiter l'ouverture des modals aux boutons dédiés
+    restrictModalTriggers();
 }
 
 /**

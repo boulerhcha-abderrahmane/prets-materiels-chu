@@ -277,6 +277,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                         <th>Matériel</th>
                         <th>Quantité</th>
                         <th>Message</th>
+                        <th>Détails</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -291,9 +292,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                             $quantite_demande = $demande['quantite'];
                             $isQuantityAvailable = $quantite_demande <= $quantite_disponible;
                         ?>
-                            <tr class="<?= $isQuantityAvailable ? '' : 'table-warning' ?> request-row" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#detailsModal<?= htmlspecialchars($demande['id_demande']) ?>">
+                            <tr class="<?= $isQuantityAvailable ? '' : 'table-warning' ?> request-row">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="ms-2">
@@ -319,6 +318,14 @@ $activeAdmins = getActiveUsers($pdo, true);
                                             name="comment-text-<?= htmlspecialchars($demande['id_demande']) ?>"
                                             placeholder="Motif de refus.." 
                                             style="min-height: 60px; font-size: 0.9em;"></textarea>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-modal rounded-circle" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#detailsModal<?= htmlspecialchars($demande['id_demande']) ?>"
+                                            style="width: 36px; height: 36px;">
+                                        <i class="fas fa-info"></i>
+                                    </button>
                                 </td>
                                 <td>
                                     <form action='process_request.php' method='POST' class='d-flex gap-2'>
@@ -368,8 +375,13 @@ $activeAdmins = getActiveUsers($pdo, true);
                                                         <div class="info-group">
                                                             <div class="info-label">Matériel</div>
                                                             <div class="info-value">
-                                                                <?= htmlspecialchars($demande['nom_materiel']) ?> 
-                                                                (<?= htmlspecialchars($demande['type_materiel'] ?? 'N/A') ?>)
+                                                                <?= htmlspecialchars($demande['nom_materiel']) ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="info-group">
+                                                            <div class="info-label">Type</div>
+                                                            <div class="info-value">
+                                                                <?= htmlspecialchars($demande['type_materiel'] ?? 'Non spécifié') ?>
                                                             </div>
                                                         </div>
                                                         <div class="info-group">
@@ -477,17 +489,5 @@ $activeAdmins = getActiveUsers($pdo, true);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/admin_dashboard.js"></script>
-    <script>
-        // Supprimer les événements de survol et conserver uniquement les clics
-        $(document).ready(function() {
-            // Désactiver l'effet de survol sur les lignes du tableau
-            $('.request-row').off('mouseenter mouseleave');
-            
-            // Conserver uniquement l'événement clic pour les modals
-            $('.request-row').on('click', function() {
-                // Le modal sera ouvert via l'attribut data-bs-toggle et data-bs-target
-            });
-        });
-    </script>
 </body>
 </html>

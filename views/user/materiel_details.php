@@ -186,6 +186,36 @@ unset($_SESSION['message']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/materiel_details.css">
+    <style>
+        /* Additional styling for confirmation prompt */
+        #confirmationPrompt {
+            display: none;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        #confirmationPrompt.show {
+            display: block;
+        }
+        
+        #confirmationPrompt p {
+            margin-bottom: 10px;
+        }
+        
+        #confirmationPrompt button {
+            margin-right: 10px;
+        }
+        
+        #confirmationMotif {
+            font-style: italic;
+            color: #495057;
+            word-break: break-word;
+        }
+    </style>
 </head>
 <body>
     <?php include '../../includes/navbar.php'; ?>
@@ -227,6 +257,7 @@ unset($_SESSION['message']);
                                 <div class="mb-3">
                                     <label for="motif" class="form-label">Motif de la demande</label>
                                     <textarea id="motif" name="motif" class="form-control" style="width: 100%; max-width: 100%; height:50px;" required placeholder="Veuillez préciser le motif de votre demande de prêt"></textarea>
+                                    <div id="motifError" class="text-danger mt-2 fw-bold" style="display: none; background-color: #fff8f8; padding: 8px; border-left: 3px solid #dc3545; border-radius: 4px;"><i class="fas fa-exclamation-circle me-2"></i>Veuillez saisir un motif de demande avant de continuer.</div>
                                 </div>
                                 <button type="button" class="btn btn-primary" data-action="showConfirmation">Demander un Prêt</button>
                             </form>
@@ -284,6 +315,8 @@ unset($_SESSION['message']);
             const showConfirmationBtn = document.querySelector('[data-action="showConfirmation"]');
             const submitFormBtn = document.querySelector('[data-action="submitForm"]');
             const cancelRequestBtn = document.querySelector('[data-action="cancelRequest"]');
+            const motifError = document.getElementById('motifError');
+            const motifInput = document.getElementById('motif');
 
             // Vérifier si tous les éléments nécessaires existent
             if (demandeForm && confirmationPrompt && quantiteInput && materielNomHidden && 
@@ -291,14 +324,36 @@ unset($_SESSION['message']);
                 
                 const materielNom = materielNomHidden.value;
 
+                // Cacher le message d'erreur quand l'utilisateur commence à taper
+                motifInput.addEventListener('input', function() {
+                    motifError.style.display = 'none';
+                });
+
                 showConfirmationBtn.addEventListener('click', function() {
+                    const motifValue = motifInput.value.trim();
+                    
+                    if (!motifValue) {
+                        motifError.style.display = 'block';
+                        motifInput.focus();
+                        return;
+                    }
+                    
+                    // Cacher le message d'erreur si le motif est valide
+                    motifError.style.display = 'none';
                     document.getElementById('confirmationQuantite').textContent = quantiteInput.value;
                     document.getElementById('confirmationNom').textContent = materielNom;
-                    document.getElementById('confirmationMotif').textContent = document.getElementById('motif').value;
+                    document.getElementById('confirmationMotif').textContent = motifValue;
                     confirmationPrompt.classList.add('show');
                 });
 
                 submitFormBtn.addEventListener('click', function() {
+                    const motifValue = motifInput.value.trim();
+                    if (!motifValue) {
+                        motifError.style.display = 'block';
+                        confirmationPrompt.classList.remove('show');
+                        motifInput.focus();
+                        return;
+                    }
                     demandeForm.submit();
                 });
 
