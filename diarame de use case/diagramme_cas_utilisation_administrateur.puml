@@ -1,0 +1,148 @@
+@startuml Gestion des Prêts de Matériel - Administrateur
+
+' Styles et thème améliorés
+!define MAIN_COLOR #1a4f8b
+!define ACTOR_BG #ffeceb
+!define ACTOR_BORDER #e74c3c
+!define USER_COLOR #e74c3c
+!define NOTE_BORDER_THICKNESS 0.5
+!define CHEF_COLOR #3498db
+
+skinparam {
+  BackgroundColor white
+  ArrowColor MAIN_COLOR
+  BorderColor MAIN_COLOR
+  ActorBorderColor ACTOR_BORDER
+  ActorBackgroundColor ACTOR_BG
+  ActorBorderThickness 2
+  ActorStereotypeFontColor USER_COLOR
+  ActorFontColor USER_COLOR
+  UsecaseBorderColor #2d7dd2
+  UsecaseBackgroundColor #f8f9fa
+  NoteBorderColor #3498db
+  NoteBackgroundColor #ecf0f1
+  PackageBorderColor MAIN_COLOR
+  PackageBackgroundColor #fcfcfc
+  PackageFontColor MAIN_COLOR
+  PackageFontSize 18
+  PackageFontStyle bold
+  ActorFontSize 16
+  ActorFontStyle bold
+  UsecaseFontSize 13
+  UsecaseFontStyle bold
+  NoteFontSize 12
+  NoteFontStyle italic
+  RoundCorner 15
+  Shadowing true
+  ArrowFontSize 11
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+  FooterFontSize 10
+  FooterFontColor #666666
+  NoteBorderThickness NOTE_BORDER_THICKNESS
+  DefaultTextAlignment center
+  NoteTextAlignment left
+  Handwritten false
+}
+
+' Titre élégant du diagramme
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de cas d'utilisation - Administrateur</size>
+
+' Définition de l'acteur
+actor "Administrateur" as admin #e74c3c
+
+' Package Administrateur avec disposition améliorée
+rectangle "Fonctionnalités de l'Administrateur" {
+  ' Gestion des utilisateurs (gauche)
+  usecase "Gérer les utilisateurs" as UC1 #2ecc71
+  
+  ' Gestion du matériel (centre)
+  usecase "Gérer les materiels " as UC5 #3498db
+  
+  ' Gestion des prêts (droite)
+  usecase "Gérer les prêts" as UC9 #9b59b6
+  
+  ' Gestion des emails (nouveau)
+  usecase "Gérer les emails" as UC13 #f1c40f
+  
+  ' Gestion des notifications (nouveau)
+  usecase "recevoir notification " as UC16 #e67e22
+  usecase "Gérer les notifications" as UC17 #e67e22
+  
+  ' Gestion du profil personnel
+  usecase "Gérer profil" as UC24 #7F8C8D
+  
+  ' Notes déplacées à l'intérieur du rectangle
+  note bottom of UC1 #e8f8e8
+    <b><color:#2ecc71>Actions possibles :</color></b>
+    • Créer un compte 
+    • Modifier les informations
+    • Supprimer un compte
+  end note
+  
+  note bottom of UC5 #e1f0fa
+    <b><color:#3498db>Informations gérées :</color></b>
+    • Nom du matériel
+    • Description
+    • Quantité disponible
+    • Type
+    • Localisation
+  end note
+  
+  note bottom of UC9 #f0e4fa
+    <b><color:#9b59b6>Actions sur les prêts :</color></b>
+    • Valider une demande
+    • Refuser une demande:
+         - saisir le motif 
+    • Enregistrer un retour
+  end note
+  
+  note right of UC16 #fef5e7
+    <b><color:#e67e22>Types de notifications :</color></b>
+    • Demandes de prêt
+    • Rappels
+  end note
+  
+  note bottom of UC24 #f2f4f4
+    <b><color:#7F8C8D>Informations gérées :</color></b>
+    • Nom
+    • Prénom
+    • Photo
+    • Mot de passe
+    <b><color:CHEF_COLOR>Privilèges spécifiques au Chef :</color></b>
+    • modification d'adresse email
+  end note
+  
+  note bottom of UC13 #fef9e7
+    <b><color:#f1c40f>Actions sur les emails :</color></b>
+    • Ajouter une nouvelle adresse email
+    • Supprimer une adresse email existante
+  end note
+
+  ' Relations avec l'administrateur
+  admin --> UC1
+  admin --> UC5
+  admin --> UC9
+  admin --> UC13
+  admin --> UC16
+  admin --> UC17
+  admin --> UC24
+
+  ' Relations d'inclusion (include)
+  UC16 ..> UC17 : <<extend>>
+}
+
+' Notes restées en dehors du rectangle
+note bottom of UC17 #fef5e7
+  <b><color:#e67e22>Actions possibles :</color></b>
+  • Supprimer une notification
+  • Supprimer toutes les notifications
+  • Voir le statut de lecture
+end note
+
+
+' Pied de page avec date et signature
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml
+    

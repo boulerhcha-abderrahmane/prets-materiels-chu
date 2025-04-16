@@ -1,0 +1,75 @@
+@startuml
+
+' Version ultra-simplifiée pour compatibilité avec anciennes versions PlantUML
+
+title Diagramme de Classe - Chef de Service
+
+' Classes principales
+class Administrateur {
+  -id_admin: int
+  -nom: string
+  -prenom: string
+  -email: string
+  -mot_de_passe: string
+  -role: enum {admin, chef}
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+  -token: string
+  -reset_token_expiry: datetime
+  +gérerUtilisateurs()
+  +gérerMatériels()
+  +gérerPrêts()
+  +gérerEmails()
+  +gérerNotifications()
+  +gérerProfil()
+}
+
+class ChefService {
+  +gérerAdministrateurs()
+  +consulterHistorique()
+  +gérerHistoriqueActions()
+}
+
+class HistoriqueActions {
+  -id_action: int
+  -id_admin: int
+  -type_action: enum
+  -date_action: datetime
+  -id_demande: int
+  -id_materiel: int
+  -id_utilisateur: int
+  -id_retour: int
+  -id_email: int
+  -details: text
+  +filtrerParType()
+  +filtrerParAdmin()
+  +filtrerParDate()
+  +supprimerEntrée()
+  +supprimerHistoriqueComplet()
+}
+
+' Relations simplifiées
+ChefService --|> Administrateur
+ChefService --> Administrateur : gère
+ChefService --> HistoriqueActions : gère
+
+' Notes simplifiées
+note right of ChefService
+  Privilèges spéciaux:
+  Le Chef de Service possède tous les droits 
+  d'un administrateur en plus de ses 
+  droits spécifiques.
+end note
+
+note bottom of ChefService
+  Actions possibles:
+  - Ajouter un administrateur
+  - Modifier un administrateur
+  - Supprimer un administrateur
+  - Consulter l'historique
+  - Supprimer des entrées d'historique
+  - Filtrer l'historique
+end note
+
+@enduml 

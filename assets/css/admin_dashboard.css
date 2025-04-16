@@ -191,6 +191,87 @@ body {
 }
 
 /* Responsive adjustments */
+@media (max-width: 1366px) {
+    .main-content {
+        padding: 8px;
+    }
+    
+    .top-bar {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .top-bar h1 {
+        font-size: 20px;
+    }
+    
+    .top-bar .profile h4 {
+        font-size: 14px;
+    }
+    
+    .top-bar .profile img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .dashboard {
+        gap: 8px;
+        margin: 10px 0;
+    }
+    
+    .stat-box {
+        padding: 8px 6px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+    
+    .stat-box:hover {
+        transform: translateY(-3px);
+    }
+    
+    .recent-requests {
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    .recent-requests h2 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+    
+    .recent-requests table {
+        margin-top: 10px;
+    }
+    
+    .recent-requests th, 
+    .recent-requests td {
+        padding: 6px 4px;
+        font-size: 13px;
+    }
+    
+    textarea.comment-text {
+        min-height: 40px !important;
+        font-size: 0.8em !important;
+    }
+    
+    .btn-sm {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Réduit l'espace des colonnes moins importantes */
+    .recent-requests th:nth-child(3), 
+    .recent-requests td:nth-child(3),
+    .recent-requests th:nth-child(5), 
+    .recent-requests td:nth-child(5) {
+        max-width: 80px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
 @media (max-width: 992px) {
     .dashboard {
         grid-template-columns: repeat(2, 1fr);

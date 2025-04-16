@@ -1,0 +1,138 @@
+@startuml Diagramme de Classe - Administrateur
+
+' Styles et thème
+!define MAIN_COLOR #1a4f8b
+!define ACCENT_COLOR #e74c3c
+!define BACKGROUND_COLOR #f8f9fa
+!define ARROW_COLOR #2d7dd2
+!define CLASS_HEADER_COLOR #3498db
+!define NOTE_COLOR #ecf0f1
+
+skinparam {
+  BackgroundColor white
+  ArrowColor ARROW_COLOR
+  BorderColor MAIN_COLOR
+  ClassAttributeIconSize 0
+  ClassBackgroundColor BACKGROUND_COLOR
+  ClassBorderColor MAIN_COLOR
+  ClassHeaderBackgroundColor CLASS_HEADER_COLOR
+  ClassStereotypeFontColor ACCENT_COLOR
+  NoteBackgroundColor NOTE_COLOR
+  NoteBorderColor CLASS_HEADER_COLOR
+  PackageBackgroundColor white
+  PackageBorderColor MAIN_COLOR
+  RoundCorner 10
+  Shadowing true
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+}
+
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de Classe - Administrateur</size>
+
+' Classe Administrateur
+class Administrateur {
+  -id_admin: int <<PK>>
+  -nom: string
+  -prenom: string
+  -email: string <<unique>>
+  -mot_de_passe: string
+  -role: enum {admin, chef}
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+  -token: string
+  -reset_token_expiry: datetime
+  +gérerUtilisateurs()
+  +gérerMatériels()
+  +gérerPrêts()
+  +gérerEmails()
+  +gérerNotifications()
+  +gérerProfil()
+}
+
+' Classes associées 
+class DemandePrêt {
+  -id_demande: int <<PK>>
+  -id_utilisateur: int <<FK>>
+  -id_materiel: int <<FK>>
+  -quantite: int
+  -date_demande: datetime
+  -date_validation: datetime
+  -statut: enum {en_attente, validé, valide en attente retour, refusé, retourné}
+  -date_retour_prevue: datetime
+  -commentaire: text
+}
+
+class EmailAutorisé {
+  -id_email: int <<PK>>
+  -email: string <<unique>>
+}
+
+class HistoriqueActions {
+  -id_action: int <<PK>>
+  -id_admin: int <<FK>>
+  -type_action: enum {...}
+  -date_action: datetime
+  -id_demande: int <<FK>>
+  -id_materiel: int <<FK>>
+  -id_utilisateur: int <<FK>>
+  -id_retour: int <<FK>>
+  -id_email: int <<FK>>
+  -details: text
+}
+
+class Notification {
+  -id_notification: int <<PK>>
+  -id_utilisateur: int <<FK>>
+  -message: text
+  -type: enum {demande, validation, refus, retour, rappel}
+  -date_envoi: datetime
+  -lu: boolean
+}
+
+class Matériel {
+  -id_materiel: int <<PK>>
+  -nom: string
+  -type: enum {consommable, non-consommable}
+  -description: text
+  -quantite_disponible: int
+  -photo: string
+  -date_acquisition: datetime
+  -emplacement: text
+  -actif: boolean
+}
+
+class Utilisateur {
+  -id_utilisateur: int <<PK>>
+  -nom: string
+  -prenom: string
+  -email: string <<unique>>
+  -mot_de_passe: string
+  -role: string
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+}
+
+' Relations
+Administrateur "1" --> "*" HistoriqueActions : enregistre >
+Administrateur "1" --> "*" DemandePrêt : gère >
+Administrateur "1" --> "*" EmailAutorisé : gère >
+Administrateur "1" --> "*" Matériel : gère >
+Administrateur "1" --> "*" Utilisateur : gère >
+Administrateur "1" --> "*" Notification : reçoit >
+
+' Notes explicatives
+note right of Administrateur::role
+  Le rôle "chef" a des privilèges supplémentaires
+  comme la modification d'adresse email
+end note
+
+note bottom of HistoriqueActions
+  Enregistre toutes les actions réalisées par 
+  l'administrateur dans le système
+end note
+
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml 

@@ -1,0 +1,170 @@
+@startuml Gestion_des_Prets_de_Materiel_Classes
+
+' Version simplifiée pour compatibilité avec PlantUML 1.2025.3beta5
+
+title Diagramme de Classe Complet - Application de Gestion des Prêts de Matériel
+
+' Classe Utilisateur
+class Utilisateur {
+  -id_utilisateur: int
+  -nom: string
+  -prenom: string
+  -email: string
+  -mot_de_passe: string
+  -role: string
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+  +gérerCompte()
+  +consulterCatalogue()
+  +soumettreDemandeprêt()
+  +suivreEtatDemandes()
+  +recevoirNotifications()
+  +gérerNotifications()
+}
+
+' Classe Administrateur
+class Administrateur {
+  -id_admin: int
+  -nom: string
+  -prenom: string
+  -email: string
+  -mot_de_passe: string
+  -role: enum {admin, chef}
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+  -token: string
+  -reset_token_expiry: datetime
+  +gérerUtilisateurs()
+  +gérerMatériels()
+  +gérerPrêts()
+  +gérerEmails()
+  +gérerNotifications()
+  +gérerProfil()
+}
+
+' Classe Chef
+class ChefService {
+  +gérerAdministrateurs()
+  +consulterHistorique()
+  +gérerHistoriqueActions()
+}
+
+' Classes associées 
+class DemandePrêt {
+  -id_demande: int
+  -id_utilisateur: int
+  -id_materiel: int
+  -quantite: int
+  -date_demande: datetime
+  -date_validation: datetime
+  -statut: enum
+  -date_retour_prevue: datetime
+  -commentaire: text
+  +créerDemande()
+  +suivreStatut()
+}
+
+class EmailAutorisé {
+  -id_email: int
+  -email: string
+}
+
+class HistoriqueActions {
+  -id_action: int
+  -id_admin: int
+  -type_action: enum
+  -date_action: datetime
+  -id_demande: int
+  -id_materiel: int
+  -id_utilisateur: int
+  -id_retour: int
+  -id_email: int
+  -details: text
+  +filtrerParType()
+  +filtrerParAdmin()
+  +filtrerParDate()
+  +supprimerEntrée()
+  +supprimerHistoriqueComplet()
+}
+
+class Notification {
+  -id_notification: int
+  -id_utilisateur: int
+  -message: text
+  -type: enum
+  -date_envoi: datetime
+  -lu: boolean
+  +marquerCommeLu()
+  +supprimer()
+  +supprimerToutes()
+}
+
+class Matériel {
+  -id_materiel: int
+  -nom: string
+  -type: enum
+  -description: text
+  -quantite_disponible: int
+  -photo: string
+  -date_acquisition: datetime
+  -emplacement: text
+  -actif: boolean
+}
+
+' Relations
+
+' Relations Utilisateur
+Utilisateur --> DemandePrêt : soumet
+Utilisateur --> Notification : reçoit
+DemandePrêt --> Matériel : concerne
+
+' Relations Administrateur
+Administrateur --> HistoriqueActions : enregistre
+Administrateur --> DemandePrêt : gère
+Administrateur --> EmailAutorisé : gère
+Administrateur --> Matériel : gère
+Administrateur --> Utilisateur : gère
+Administrateur --> Notification : reçoit
+
+' Relations Chef
+ChefService --|> Administrateur : est un
+ChefService --> Administrateur : gère
+ChefService --> HistoriqueActions : gère
+
+' Notes simples sans HTML ni couleurs
+note right of Utilisateur
+  Gestion de compte:
+  - Modifier nom et prénom
+  - Modifier mot de passe
+  - Modifier photo de profil
+end note
+
+note right of Administrateur
+  Le rôle "chef" a des privilèges supplémentaires
+  comme la modification d'adresse email
+end note
+
+note bottom of HistoriqueActions
+  Enregistre toutes les actions réalisées
+  par l'administrateur dans le système
+end note
+
+note right of ChefService
+  Privilèges spéciaux:
+  Le Chef de Service possède tous les droits 
+  d'un administrateur en plus de ses 
+  droits spécifiques
+end note
+
+note bottom of ChefService
+  Actions possibles:
+  - Ajouter/modifier/supprimer administrateur
+  - Consulter l'historique des actions
+  - Gérer l'historique (supprimer/filtrer)
+end note
+
+footer Créé le %date("dd/MM/yyyy")
+
+@enduml 

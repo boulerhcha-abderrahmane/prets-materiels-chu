@@ -1,0 +1,107 @@
+@startuml Gestion des Prêts de Matériel - Chef de Service
+
+' Styles et thème améliorés
+!define MAIN_COLOR #1a4f8b
+!define ACTOR_BG #ffeee5
+!define ACTOR_BORDER #e67e22
+!define USER_COLOR #e67e22
+!define NOTE_BORDER_THICKNESS 0.5
+!define CHEF_COLOR #3498db
+!define PRIVILEGE_COLOR #e67e22
+
+skinparam {
+  BackgroundColor white
+  ArrowColor MAIN_COLOR
+  BorderColor MAIN_COLOR
+  ActorBorderColor ACTOR_BORDER
+  ActorBackgroundColor ACTOR_BG
+  ActorBorderThickness 2
+  ActorStereotypeFontColor USER_COLOR
+  ActorFontColor USER_COLOR
+  UsecaseBorderColor #2d7dd2
+  UsecaseBackgroundColor #f8f9fa
+  NoteBorderColor #3498db
+  NoteBackgroundColor #ecf0f1
+  PackageBorderColor MAIN_COLOR
+  PackageBackgroundColor #fcfcfc
+  PackageFontColor MAIN_COLOR
+  PackageFontSize 18
+  PackageFontStyle bold
+  ActorFontSize 16
+  ActorFontStyle bold
+  UsecaseFontSize 13
+  UsecaseFontStyle bold
+  NoteFontSize 12
+  NoteFontStyle italic
+  RoundCorner 15
+  Shadowing true
+  ArrowFontSize 11
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+  FooterFontSize 10
+  FooterFontColor #666666
+  NoteBorderThickness NOTE_BORDER_THICKNESS
+  DefaultTextAlignment center
+  NoteTextAlignment left
+  Handwritten false
+}
+
+' Titre élégant du diagramme
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de cas d'utilisation - Chef de Service</size>
+
+' Définition de l'acteur
+actor "Chef de Service" as chef #e67e22
+
+' Note sur les droits du chef
+note top of chef #fff8e1
+  <b><color:PRIVILEGE_COLOR>◆ PRIVILÈGES SPÉCIAUX ◆</color></b>
+  <i>Le Chef de Service possède tous les droits 
+  d'un administrateur en plus de ses droits spécifiques.</i>
+end note
+
+' Package Chef
+rectangle "Fonctionnalités du Chef de Service" {
+  ' Gestion des administrateurs
+  usecase "Gérer les administrateurs" as UC1 #3498db
+  
+  ' Gestion de l'historique des actions
+  usecase "Consulter l'historique" as UC2 #2ecc71
+  usecase "Gérer historiques actions" as UC3 #27b317
+
+  ' Notes explicatives
+  note bottom of UC1 #e1f0fa
+    <b><color:#3498db>Actions possibles :</color></b>
+    • Ajouter un administrateur
+    • Modifier un administrateur
+    • Supprimer un administrateur
+  end note
+  
+  note right of UC2 #e6ffed
+    <b><color:#2ecc71>Actions sur l'historique :</color></b>
+    • Consulter toutes les actions effectuées par les administrateurs
+    • Afficher l'historique des opérations
+  end note
+  
+  note right of UC3 #e6ffed
+    <b><color:#27b317>Actions de gestion :</color></b>
+    • Supprimer des entrées
+    • Supprimer l'historique complet
+    • Filtrer par type d'action
+    • Filtrer par administrateur
+    • Filtrer par date
+  end note
+
+  ' Relations avec le chef
+  chef --> UC1
+  chef --> UC2
+
+  ' Relations d'inclusion/extension
+  UC2 ..> UC3 : <<extend>>
+}
+
+
+
+' Pied de page
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml

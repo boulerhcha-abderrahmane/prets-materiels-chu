@@ -1,0 +1,164 @@
+@startuml Diagramme de Classe - Gestion des Prêts de Matériel
+
+' Styles et thème améliorés
+!define MAIN_COLOR #1a4f8b
+!define CLASS_BORDER_COLOR #2c3e50
+!define USER_COLOR #3498db
+!define ADMIN_COLOR #e74c3c
+!define CHEF_COLOR #e67e22
+!define MATERIEL_COLOR #2ecc71
+!define PRET_COLOR #9b59b6
+!define NOTIF_COLOR #f1c40f
+!define EMAIL_COLOR #1abc9c
+!define HIST_COLOR #7f8c8d
+
+skinparam {
+  BackgroundColor white
+  ArrowColor MAIN_COLOR
+  BorderColor CLASS_BORDER_COLOR
+  ClassBorderColor CLASS_BORDER_COLOR
+  ClassBorderThickness 1.5
+  ClassBackgroundColor white
+  ClassHeaderBackgroundColor #f8f9fa
+  ClassStereotypeFontSize 11
+  ClassFontSize 13
+  ClassFontStyle bold
+  AttributeFontSize 11
+  AttributeFontColor black
+  MethodFontSize 11
+  MethodFontColor black
+  NoteBackgroundColor #ecf0f1
+  NoteBorderColor #95a5a6
+  RoundCorner 8
+  Shadowing true
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+  FooterFontSize 10
+  FooterFontColor #666666
+  PackageFontSize 14
+  PackageFontStyle bold
+  PackageBorderColor MAIN_COLOR
+}
+
+' Titre du diagramme
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de Classe</size>
+
+' ---- CLASSES USER ----
+abstract class Utilisateur <<A>> #USER_COLOR {
+  +id: int
+  +nom: string
+  +prenom: string
+  +email: string
+  +mot_de_passe: string
+  +photo: string
+  +date_creation: datetime
+  
+  +modifierProfile(): boolean
+  +changerMotDePasse(): boolean
+  +connecter(): boolean
+  +deconnecter(): void
+}
+
+class Administrateur <<C>> #ADMIN_COLOR {
+  -niveau_acces: enum
+  +date_nomination: datetime
+  
+  +gererUtilisateurs(): void
+  +gererMateriels(): void
+  +gererPrets(): void
+  +gererEmails(): void
+  +validerDemande(demande: DemandePret): boolean
+  +refuserDemande(demande: DemandePret, motif: string): boolean
+  +enregistrerRetour(demande: DemandePret): boolean
+}
+
+class ChefDeService <<C>> #CHEF_COLOR {
+  +date_nomination_chef: datetime
+  
+  +gererAdministrateurs(): void
+  +consulterHistorique(): List<HistoriqueActions>
+  +supprimerHistorique(): boolean
+  +filtrerHistorique(criteres: map): List<HistoriqueActions>
+}
+
+' ---- CLASSES PRÊT ET MATÉRIEL ----
+class Materiel <<C>> #MATERIEL_COLOR {
+  +id: int
+  +nom: string
+  +description: string
+  +type: string
+  +quantite_totale: int
+  +quantite_disponible: int
+  +localisation: string
+  +date_ajout: datetime
+  +image: string
+  -statut: enum [disponible, indisponible]
+  
+  +verifierDisponibilite(): boolean
+  +mettreAJour(): boolean
+}
+
+class DemandePret <<C>> #PRET_COLOR {
+  +id: int
+  +id_utilisateur: int
+  +id_materiel: int
+  +quantite: int
+  +date_demande: datetime
+  +date_retour_effectif: datetime
+  +motif_demande: string
+  +motif_refus: string
+  +statut: enum [en_attente, valide, refuse, en_attente_retour, retourne]
+  +soumettreNouvelleDemande(): boolean
+  
+}
+
+' ---- CLASSES SUPPORT ----
+class Notification <<C>> #NOTIF_COLOR {
+  +id: int
+  +id_utilisateur: int
+  +type: enum [validation, refus, retour, rappel, bienvenue, demande]
+  +titre: string
+  +message: string
+  +date_creation: datetime
+  +date_lecture: datetime
+  +statut: enum [non_lue, lue]
+  
+  +marquerCommeLue(): boolean
+  +supprimer(): boolean
+}
+
+class EmailAutorise <<C>> #EMAIL_COLOR {
+  +id: int
+  +email: string
+  +verifierValidite(email: string): boolean
+}
+
+class HistoriqueActions <<C>> #HIST_COLOR {
+  +id: int
+  +id_administrateur: int
+  +type_action: enum [ajout, modification, suppression, validation, refus]
+  +table_concernee: string
+  +id_element: int
+  +details: string
+  +date_action: datetimed
+  +ip_adresse: string
+  
+  +enregistrerAction(): boolean
+}
+
+' ---- RELATIONS ENTRE CLASSES ----
+Utilisateur <|-- Administrateur : extends
+Administrateur <|-- ChefDeService : extends
+
+Utilisateur "1" -- "*" DemandePret : effectue >
+Utilisateur "1" -- "*" Notification : reçoit >
+
+Administrateur "1" -- "*" EmailAutorise : gère >
+Administrateur "1" -- "*" HistoriqueActions : génère >
+
+DemandePret "*" -- "1" Materiel : concerne >
+
+' Pied de page
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml 

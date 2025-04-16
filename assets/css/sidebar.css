@@ -222,6 +222,60 @@ body {
 }
 
 /* Media queries pour le responsive */
+@media screen and (max-width: 1366px) {
+    .sidebar {
+        width: 180px;
+        padding: 8px;
+    }
+    
+    .sidebar h2 {
+        font-size: 16px;
+        margin-bottom: 15px;
+        padding-bottom: 6px;
+    }
+    
+    .sidebar ul li a {
+        font-size: 12px;
+        padding: 4px 6px;
+        border-radius: 4px;
+        margin-bottom: 1px;
+    }
+    
+    .sidebar ul li a i {
+        margin-right: 5px;
+        width: 12px;
+        font-size: 11px;
+    }
+    
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+        transform: translateX(1px);
+    }
+    
+    .main-content {
+        margin-left: 180px;
+    }
+    
+    .notification-badge {
+        min-width: 14px;
+        height: 14px;
+        font-size: 9px;
+        line-height: 10px;
+        padding: 1px 3px;
+        top: -5px;
+        right: 3px;
+        border-width: 1px;
+    }
+    
+    .sidebar ul {
+        margin-bottom: 0;
+    }
+    
+    .nav-item {
+        margin: 1px 0;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .hamburger-menu {
         display: flex !important;

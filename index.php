@@ -1,3 +1,7 @@
+<?php
+// Inclure la configuration des chemins
+include_once './config/paths.php';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -40,7 +44,7 @@
             color: var(--text-color);
             overflow-x: hidden;
             position: relative;
-            padding-top: 60px;
+            padding-top: 0;
             line-height: 1.5;
             letter-spacing: 0.1px;
         }
@@ -53,6 +57,11 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            height: 60px;
         }
 
         #mainNav.navbar-shrink {
@@ -107,13 +116,40 @@
             width: calc(100% - 1.6rem);
         }
 
+        /* Menu mobile styles */
+        @media (max-width: 991.98px) {
+            #navbarResponsive {
+                background-color: rgba(26, 79, 139, 0.98);
+                padding: 0.5rem 1rem;
+                border-radius: 0 0 10px 10px;
+                margin-top: 0.5rem;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            #navbarResponsive .navbar-nav {
+                padding: 0.5rem 0;
+            }
+            
+            #mainNav .nav-link {
+                padding: 0.75rem 0.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            #mainNav .nav-link:last-child {
+                border-bottom: none;
+            }
+        }
+
         /* Header */
         .header {
             background: var(--gradient-primary);
-            padding: 4rem 0 6rem;
+            padding: 0;
             position: relative;
             overflow: hidden;
             clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+            margin-top: 60px;
         }
 
         .header::before {
@@ -127,6 +163,7 @@
         .header-content {
             position: relative;
             z-index: 2;
+            padding: 3.8rem 0 5.8rem;
         }
 
         .header h1 {
@@ -464,10 +501,22 @@
             
             .header {
                 padding: 2.5rem 0 4rem;
+                clip-path: polygon(0 0, 100% 0, 100% 96%, 0 100%);
+            }
+            
+            .header-content {
+                padding: 1.8rem 0 3rem;
             }
             
             .header h1 {
                 font-size: 1.5rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+                max-width: 100%;
             }
             
             .card-header h2 {
@@ -537,6 +586,303 @@
             
             .contact-info {
                 gap: 1rem;
+            }
+        }
+
+        @media (max-width: 1366px) {
+            /* Optimisations globales */
+            body {
+                font-size: 15px;
+                line-height: 1.45;
+                padding-top: 0;
+            }
+
+            /* Optimisations de la navigation */
+            #mainNav {
+                padding: 0.45rem 0;
+                backdrop-filter: blur(4px);
+                height: 55px;
+            }
+
+            /* Optimisations du header */
+            .header {
+                margin-top: 55px;
+            }
+
+            .header-content {
+                padding: 3.3rem 0 4.8rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.6px;
+            }
+            
+            .header p {
+                font-size: 0.92rem;
+                max-width: 520px;
+                margin-bottom: 0.8rem;
+                line-height: 1.5;
+            }
+
+            /* Optimisations des cartes principales */
+            .card-container {
+                margin-top: -1.6rem;
+                border-radius: 9px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+            }
+
+            .card-header {
+                padding: 1.2rem;
+                background: rgba(248, 249, 250, 0.8);
+            }
+
+            .card-header h2 {
+                font-size: 1.4rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .card-body {
+                padding: 1.2rem;
+            }
+
+            .access-button {
+                padding: 0.75rem 1.2rem;
+                font-size: 0.82rem;
+                letter-spacing: 0.2px;
+                border-radius: 35px;
+            }
+
+            /* Optimisations des sections */
+            .section {
+                padding: 2.8rem 0;
+            }
+
+            .section-title {
+                font-size: 1.85rem;
+                margin-bottom: 0.7rem;
+                letter-spacing: 0.3px;
+            }
+
+            .section-subtitle {
+                font-size: 0.92rem;
+                margin-bottom: 2rem;
+                line-height: 1.5;
+            }
+
+            /* Optimisations des cartes de fonctionnalités */
+            .feature-card {
+                padding: 1.1rem 0.9rem;
+                border-radius: 7px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
+            }
+            
+            .feature-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+                margin-bottom: 0.7rem;
+                background-color: rgba(52, 152, 219, 0.06);
+            }
+            
+            .feature-title {
+                font-size: 1.02rem;
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.2px;
+            }
+            
+            .feature-description {
+                font-size: 0.8rem;
+                line-height: 1.5;
+                letter-spacing: 0.1px;
+            }
+
+            /* Optimisations de la section "Comment ça marche" */
+            .step-container {
+                margin-bottom: 1.5rem;
+            }
+            
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+                margin-right: 0.7rem;
+                box-shadow: 0 3px 8px rgba(52, 152, 219, 0.15);
+            }
+            
+            .step-title {
+                font-size: 1.02rem;
+                margin-bottom: 0.35rem;
+                letter-spacing: 0.2px;
+            }
+            
+            .step-description {
+                font-size: 0.8rem;
+                line-height: 1.5;
+                letter-spacing: 0.1px;
+            }
+
+            .step-image {
+                border-radius: 7px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            /* Optimisations de la section contact */
+            .contact-card {
+                padding: 1.1rem;
+                border-radius: 9px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+            }
+            
+            .contact-item i {
+                width: 30px;
+                height: 30px;
+                font-size: 0.95rem;
+                background-color: rgba(52, 152, 219, 0.06);
+            }
+            
+            .contact-item p {
+                font-size: 0.82rem;
+                letter-spacing: 0.1px;
+            }
+
+            .contact-info {
+                gap: 1.1rem;
+            }
+
+            /* Optimisations des marges et espacements */
+            .row {
+                margin-left: -0.4rem;
+                margin-right: -0.4rem;
+            }
+
+            .col-lg-4, .col-lg-8, .col-md-6, .col-md-12 {
+                padding-left: 0.4rem;
+                padding-right: 0.4rem;
+            }
+
+            /* Optimisations des animations */
+            .card-container, .feature-card, .contact-card {
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .card-container:hover {
+                transform: translateY(-2.5px);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+            }
+
+            .feature-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .contact-card:hover {
+                transform: translateY(-2.5px);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+            }
+
+            /* Optimisations des effets de survol */
+            .nav-link:hover::after {
+                width: calc(100% - 1.4rem);
+            }
+
+            .feature-icon:hover {
+                transform: scale(1.04);
+                background-color: rgba(52, 152, 219, 0.1);
+            }
+
+            .contact-item:hover i {
+                transform: scale(1.05);
+            }
+
+            /* Optimisations des performances */
+            .header::before {
+                opacity: 0.12;
+            }
+
+            .feature-card::before {
+                height: 2.5px;
+            }
+
+            .contact-card::before {
+                height: 2.5px;
+            }
+
+            /* Optimisations des images */
+            .step-image img {
+                transform: scale(1);
+                transition: transform 0.3s ease;
+            }
+
+            .step-image:hover img {
+                transform: scale(1.02);
+            }
+        }
+
+        /* Styles supplémentaires pour très petits écrans */
+        @media (max-width: 375px) {
+            .header {
+                clip-path: polygon(0 0, 100% 0, 100% 98%, 0 100%);
+            }
+            
+            .header-content {
+                padding: 1.2rem 0 2rem;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .header h1::after {
+                width: 40px;
+                margin: 0.4rem auto 0;
+            }
+            
+            .header p {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+            
+            .main-container {
+                margin-top: -1.5rem;
+            }
+        }
+        
+        /* Styles spécifiques pour iPhone 13 */
+        @media only screen and (min-width: 376px) and (max-width: 400px) {
+            .header {
+                clip-path: polygon(0 0, 100% 0, 100% 99%, 0 100%);
+                margin-top: 50px;
+            }
+            
+            .header-content {
+                padding: 0.8rem 0 1.2rem;
+            }
+            
+            .header h1 {
+                font-size: 1.25rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
+                line-height: 1.3;
+                margin-bottom: 0.4rem;
+            }
+            
+            .header h1::after {
+                width: 35px;
+                height: 1.5px;
+                margin: 0.3rem auto 0;
+            }
+            
+            .main-container {
+                margin-top: -1rem;
+            }
+            
+            #mainNav {
+                height: 50px;
             }
         }
 
@@ -964,4 +1310,3 @@
     <?php include 'includes/footer.php'; ?>
 </body>
 </html>
-

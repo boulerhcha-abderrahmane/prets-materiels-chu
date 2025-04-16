@@ -1,0 +1,125 @@
+@startuml Diagramme de Classe - Utilisateur
+
+' Styles et thème
+!define MAIN_COLOR #1a4f8b
+!define ACCENT_COLOR #3498db
+!define BACKGROUND_COLOR #f8f9fa
+!define ARROW_COLOR #2d7dd2
+!define CLASS_HEADER_COLOR #3498db
+!define NOTE_COLOR #ecf0f1
+
+skinparam {
+  BackgroundColor white
+  ArrowColor ARROW_COLOR
+  BorderColor MAIN_COLOR
+  ClassAttributeIconSize 0
+  ClassBackgroundColor BACKGROUND_COLOR
+  ClassBorderColor MAIN_COLOR
+  ClassHeaderBackgroundColor CLASS_HEADER_COLOR
+  ClassStereotypeFontColor ACCENT_COLOR
+  NoteBackgroundColor NOTE_COLOR
+  NoteBorderColor CLASS_HEADER_COLOR
+  PackageBackgroundColor white
+  PackageBorderColor MAIN_COLOR
+  RoundCorner 10
+  Shadowing true
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+}
+
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de Classe - Utilisateur</size>
+
+' Classe Utilisateur
+class Utilisateur {
+  -id_utilisateur: int <<PK>>
+  -nom: string
+  -prenom: string
+  -email: string <<unique>>
+  -mot_de_passe: string
+  -role: string
+  -photo: string
+  -date_creation: datetime
+  -actif: boolean
+  +gérerCompte()
+  +consulterCatalogue()
+  +soumettreDemandeprêt()
+  +suivreEtatDemandes()
+  +recevoirNotifications()
+  +gérerNotifications()
+}
+
+' Classes associées 
+class DemandePrêt {
+  -id_demande: int <<PK>>
+  -id_utilisateur: int <<FK>>
+  -id_materiel: int <<FK>>
+  -quantite: int
+  -date_demande: datetime
+  -date_validation: datetime
+  -statut: enum {en_attente, validé, valide en attente retour, refusé, retourné}
+  -date_retour_prevue: datetime
+  -commentaire: text
+  +créerDemande()
+  +suivreStatut()
+}
+
+class Notification {
+  -id_notification: int <<PK>>
+  -id_utilisateur: int <<FK>>
+  -message: text
+  -type: enum {validation, refus, retour, rappel, bienvenue, demande}
+  -date_envoi: datetime
+  -lu: boolean
+  +marquerCommeLu()
+  +supprimer()
+  +supprimerToutes()
+}
+
+class Matériel {
+  -id_materiel: int <<PK>>
+  -nom: string
+  -type: enum {consommable, non-consommable}
+  -description: text
+  -quantite_disponible: int
+  -photo: string
+  -date_acquisition: datetime
+  -emplacement: text
+  -actif: boolean
+}
+
+' Relations
+Utilisateur "1" --> "*" DemandePrêt : soumet >
+Utilisateur "1" --> "*" Notification : reçoit >
+
+DemandePrêt "*" --> "1" Matériel : concerne >
+
+' Notes explicatives
+note right of Utilisateur::gérerCompte
+  Peut modifier:
+  - Nom et prénom
+  - Mot de passe
+  - Photo de profil
+end note
+
+note right of DemandePrêt::statut
+  Suivi des états de demande:
+  - en_attente: demande soumise, pas encore traitée
+  - validé: demande acceptée par l'admin
+  - valide en attente retour: matériel emprunté
+  - refusé: demande rejetée par l'admin
+  - retourné: matériel rendu
+end note
+
+note bottom of Notification
+  Types de notifications:
+  - validation: demande acceptée
+  - refus: demande rejetée
+  - retour: confirmation de retour
+  - rappel: pour retour imminent
+  - bienvenue: nouvel utilisateur
+  - demande: confirmation demande
+end note
+
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml 

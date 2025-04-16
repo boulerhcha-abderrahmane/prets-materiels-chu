@@ -1,0 +1,127 @@
+@startuml Gestion des Prêts de Matériel - Utilisateur
+
+' Styles et thème améliorés
+!define MAIN_COLOR #1a4f8b
+!define ACTOR_BG #eaf2fd
+!define ACTOR_BORDER #3498db
+!define USER_COLOR #3498db
+!define NOTE_BORDER_THICKNESS 0.5
+!define CHEF_COLOR #3498db
+
+' Styles et thème
+skinparam {
+  BackgroundColor white
+  ArrowColor #1a4f8b
+  BorderColor #1a4f8b
+  ActorBorderColor ACTOR_BORDER
+  ActorBackgroundColor ACTOR_BG
+  ActorBorderThickness 2
+  ActorStereotypeFontColor USER_COLOR
+  ActorFontColor USER_COLOR
+  UsecaseBorderColor #2d7dd2
+  UsecaseBackgroundColor #f8f9fa
+  NoteBorderColor #3498db
+  NoteBackgroundColor #ecf0f1
+  PackageBorderColor #1a4f8b
+  PackageBackgroundColor #f8f9fa
+  PackageFontColor #1a4f8b
+  PackageFontSize 16
+  PackageFontStyle bold
+  ActorFontSize 16
+  ActorFontStyle bold
+  UsecaseFontSize 12
+  UsecaseFontStyle bold
+  NoteFontSize 11
+  NoteFontStyle italic
+  RoundCorner 15
+  Shadowing true
+  ArrowFontSize 11
+  TitleFontSize 20
+  TitleFontColor MAIN_COLOR
+  FooterFontSize 10
+  FooterFontColor #666666
+  NoteBorderThickness NOTE_BORDER_THICKNESS
+  DefaultTextAlignment center
+  NoteTextAlignment left
+  Handwritten false
+}
+
+' Titre élégant du diagramme
+title <font color=MAIN_COLOR><b><size:22>Application de Gestion des Prêts de Matériel</size></b></font>\n<size:17>Diagramme de cas d'utilisation - Utilisateur</size>
+
+' Définition de l'acteur
+actor "Utilisateur" as user #3498db
+
+' Package Utilisateur avec disposition améliorée
+rectangle "Cas d'utilisation Utilisateur" {
+  ' Gestion du compte (gauche)
+  usecase "Gérer son compte" as UC1 #2ecc71
+  
+  note bottom of UC1 #e8f8e8
+    <b><color:#2ecc71>Informations modifiables :</color></b>
+    - Nom
+    - Prénom
+    - Mot de passe
+    - photo
+  end note
+  
+  ' Gestion des demandes (centre)
+  usecase "Soumettre une demande de prêt" as UC2 #3498db
+  usecase "Consulter le catalogue" as UC3 #3498db
+  
+  ' Suivi (droite)
+  usecase "Suivre l'état des demandes" as UC6 #9b59b6
+  
+  note bottom of UC6 #f0e4fa
+    <b><color:#9b59b6>Informations suivies :</color></b>
+    - Date de demande
+    - Matériel demandé
+    - Type et description
+    - Quantité
+    - Statut actuel
+    - Date de retour prévue
+    - Date de retour effective
+    <b><color:#9b59b6>Statuts possibles :</color></b>
+    - en_attente
+    - validé
+    - en attente retour
+    - refusé
+    - retourné
+  end note
+  
+  ' Notifications
+  usecase "Recevoir des notifications" as UC5 #e74c3c
+  usecase "Gérer les notifications" as UC9 #e74c3c
+  
+  note left of UC5 #fde5e3
+    <b><color:#e74c3c>Types de notifications :</color></b>
+    - validation
+    - refus
+    - retour
+    - rappel
+  end note
+
+  note bottom of UC9 #fde5e3
+    <b><color:#e74c3c>Actions possibles :</color></b>
+    - Supprimer une notification
+    - Supprimer toutes les notifications
+  end note
+}
+
+' Relations avec l'utilisateur
+user --> UC1
+user --> UC2
+user --> UC3
+user --> UC5
+user --> UC6
+
+' Relations d'inclusion (include)
+UC2 ..> UC3 : <<include>>
+
+' Relations d'extension (extend)
+UC5 ..> UC9 : <<extend>>
+
+' Pied de page avec date et signature
+footer Créé le %date("dd/MM/yyyy") - Application de Gestion des Prêts de Matériel v1.0
+
+@enduml

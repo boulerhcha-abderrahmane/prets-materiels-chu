@@ -1,99 +1,181 @@
-# Scripts de Vérification des Retards
+# 📋 Scripts de Vérification des Retards
 
-Ce dossier contient les scripts nécessaires pour la vérification automatique des retards de matériels.
+> Système automatisé de vérification et notification des retards de matériels
 
-## Structure des fichiers
+![Status](https://img.shields.io/badge/Status-Actif-success)
+![Version](https://img.shields.io/badge/Version-1.0-blue)
+![Schedule](https://img.shields.io/badge/Schedule-10:45%20Daily-orange)
 
-- `check_retards.php` : Script principal qui vérifie les retards et envoie les notifications
-- `run_check_retards.bat` : Script batch qui exécute le script PHP et enregistre les logs
-- `logs/` : Dossier contenant les fichiers de logs des exécutions
+## 📁 Structure des fichiers
 
-## Configuration de la tâche planifiée
+| Fichier | Description |
+|---------|-------------|
+| `check_retards.php` | Script principal de vérification des retards |
+| `run_check_retards.bat` | Script batch d'exécution et logging |
+| `logs/` | Dossier des fichiers de logs |
 
-Pour configurer l'exécution automatique à 8h00 chaque jour :
+## ⚙️ Configuration
 
-1. Ouvrir le Planificateur de tâches Windows (taper "planificateur de tâches" dans le menu Démarrer)
-2. Cliquer sur "Créer une tâche" dans le panneau de droite
-3. Dans l'onglet "Général" :
-   - Nom : "VerificationRetardsMateriels"
-   - Description : "Vérifie les retards de matériels et envoie les notifications"
-   - Sélectionner "Exécuter que l'utilisateur est connecté ou non"
-   - Cocher "Exécuter avec les privilèges les plus élevés"
+### Interface Graphique
 
-4. Dans l'onglet "Déclencheurs" :
-   - Cliquer sur "Nouveau"
-   - Choisir "Quotidien"
-   - Définir l'heure de début à 08:00:00
-   - Cliquer sur "OK"
+1. **Ouvrir le Planificateur de tâches**
+   - Menu Démarrer → "planificateur de tâches"
 
-5. Dans l'onglet "Actions" :
-   - Cliquer sur "Nouveau"
-   - Action : "Démarrer un programme"
-   - Programme/script : `C:\xampp\htdocs\prets_materiels\scripts\run_check_retards.bat`
-   - Cliquer sur "OK"
+2. **Créer une nouvelle tâche**
+   - Panneau de droite → "Créer une tâche"
 
-6. Dans l'onglet "Conditions" :
-   - Décocher "Démarrer la tâche uniquement si l'ordinateur est alimenté sur secteur"
-   - Cliquer sur "OK"
-
-7. Dans l'onglet "Paramètres" :
-   - Cocher "Exécuter la tâche dès que possible après un démarrage manqué"
-   - Cliquer sur "OK"
-
-8. Cliquer sur "OK" pour créer la tâche
-
-## Vérification du fonctionnement
-
-Pour vérifier que la tâche est bien configurée :
-
-1. Dans le Planificateur de tâches, vérifier que la tâche "VerificationRetardsMateriels" est présente
-2. Vérifier que le statut est "Prêt"
-3. Vérifier que le prochain déclenchement est prévu pour 8h00 le lendemain
-
-## Logs
-
-Les logs sont enregistrés dans le dossier `logs/` avec le format suivant :
-- Nom du fichier : `check_retards_YYYY-MM-DD.log`
-- Contenu : Date et heure d'exécution, nombre de retards trouvés, détails des notifications envoyées
-
-## Maintenance
-
-### Vérification des logs
-
-Pour vérifier les logs :
-1. Ouvrir le dossier `logs/`
-2. Consulter le fichier du jour ou des jours précédents
-3. Vérifier que les exécutions ont bien eu lieu à 8h00
-
-### En cas de problème
-
-Si la tâche ne s'exécute pas :
-1. Vérifier que le service "Planificateur de tâches" est bien démarré
-2. Vérifier les logs Windows dans l'Observateur d'événements
-3. Exécuter manuellement le script `run_check_retards.bat` pour tester
-
-### Après redémarrage du serveur
-
-Si le serveur a été redémarré, il est important de vérifier que la tâche planifiée est bien active :
-
-1. Vérifier le statut de la tâche :
+3. **Configuration Générale** ⚡
    ```
-   schtasks /query /tn "VerificationRetardsMateriels" /fo list
+   Nom: VerificationRetardsMateriels
+   Description: Vérifie les retards de matériels et envoie les notifications
+   Options: 
+   ✓ Exécuter que l'utilisateur est connecté ou non
+   ✓ Exécuter avec les privilèges les plus élevés
    ```
 
-2. Si la tâche n'est pas listée ou si son statut n'est pas "Prêt", la réactiver :
+4. **Configuration des Déclencheurs** 🕒
    ```
-   schtasks /create /tn "VerificationRetardsMateriels" /tr "C:\xampp\htdocs\prets_materiels\scripts\run_check_retards.bat" /sc daily /st 08:00 /ru SYSTEM
-   ```
-
-3. S'assurer que les services XAMPP sont démarrés :
-   ```
-   net start mysql
-   net start apache
+   Type: Quotidien
+   Heure: 10:45:00
    ```
 
-4. Exécuter manuellement le script pour rattraper les vérifications manquées :
+5. **Configuration des Actions** ▶️
    ```
+   Action: Démarrer un programme
+   Programme: C:\xampp\htdocs\prets_materiels\scripts\run_check_retards.bat
+   ```
+
+6. **Configuration des Conditions** ⚡
+   ```
+   ❌ Démarrer la tâche uniquement si l'ordinateur est alimenté sur secteur
+   ```
+
+7. **Configuration des Paramètres** ⚙️
+   ```
+   ✓ Exécuter la tâche dès que possible après un démarrage manqué
+   ```
+
+### Ligne de Commande
+
+#### 🔧 Création de Tâche
+
+```powershell
+# Création basique
+schtasks /create /tn "\NomDeLaTache" /tr "chemin\vers\script.bat" /sc daily /st HH:MM /ru SYSTEM
+
+# Création avancée
+schtasks /create /tn "\NomDeLaTache" /tr "chemin\vers\script.bat" /sc daily /st HH:MM /ru SYSTEM /rl highest /f
+```
+
+#### 📝 Paramètres Principaux
+
+| Paramètre | Description |
+|-----------|-------------|
+| `/tn` | Nom de la tâche |
+| `/tr` | Programme à exécuter |
+| `/sc` | Planification (daily/weekly/monthly) |
+| `/st` | Heure de début (HH:MM) |
+| `/ru` | Compte utilisateur (SYSTEM) |
+| `/rl` | Niveau d'exécution (highest) |
+| `/f` | Forcer la création |
+
+#### 🔄 Gestion des Tâches
+
+```powershell
+# Modification
+schtasks /change /tn "\NomDeLaTache" /st HH:MM
+
+# Liste des tâches
+schtasks /query /fo list /v
+
+# Exécution manuelle
+schtasks /run /tn "\NomDeLaTache"
+
+# Suppression
+schtasks /delete /tn "\NomDeLaTache" /f
+```
+
+## 📊 Exemple: VerificationRetardsMateriels
+
+### Création
+```powershell
+schtasks /create /tn "\VerificationRetardsMateriels" /tr "C:\xampp\htdocs\prets_materiels\scripts\run_check_retards.bat" /sc daily /st 10:45 /ru SYSTEM /rl highest /f
+```
+
+### Modification
+```powershell
+schtasks /change /tn "\VerificationRetardsMateriels" /st 10:45
+```
+
+### Vérification
+```powershell
+schtasks /query /tn "\VerificationRetardsMateriels" /fo list /v
+```
+
+## 📝 Logs
+
+### Structure
+```
+logs/
+└── check_retards_YYYY-MM-DD.log
+```
+
+### Contenu
+- Date et heure d'exécution
+- Nombre de retards trouvés
+- Détails des notifications
+
+## 🔍 Maintenance
+
+### Vérification des Logs
+1. Accéder au dossier `logs/`
+2. Consulter le fichier du jour
+3. Vérifier l'heure d'exécution (10:45)
+
+### Dépannage
+1. **Service Planificateur**
+   ```powershell
+   net start | findstr "Task Scheduler"
+   ```
+
+2. **Logs Windows**
+   ```powershell
+   eventvwr.msc
+   ```
+
+3. **Permissions**
+   ```powershell
+   icacls "chemin\vers\script.bat"
+   ```
+
+4. **Test Manuel**
+   ```powershell
    cd C:\xampp\htdocs\prets_materiels\scripts
    .\run_check_retards.bat
-   ``` 
+   ```
+
+## ⭐ Bonnes Pratiques
+
+### 1. Nommage
+- ✅ Noms descriptifs
+- ✅ Pas d'espaces
+- ✅ Préfixe de projet
+
+### 2. Sécurité
+- ✅ Compte SYSTEM
+- ✅ Niveau d'exécution approprié
+- ✅ Vérification des permissions
+
+### 3. Maintenance
+- ✅ Documentation
+- ✅ Vérification des logs
+- ✅ Tests préalables
+
+### 4. Dépannage
+- ✅ Logs Windows
+- ✅ Tests manuels
+- ✅ Vérification des chemins
+
+---
+
+> 💡 **Note**: Pour toute question ou problème, consulter la section maintenance ou contacter l'administrateur système.

@@ -1,4 +1,37 @@
-<!-- Footer --> <link rel="stylesheet" href="http://localhost/prets_materiels/assets/css/footer.css">
+<!-- Footer --> 
+<?php
+// Inclure la configuration des chemins si elle n'a pas déjà été incluse
+if (!isset($css_url)) {
+    // Détermine où est le fichier de configuration selon le contexte
+    $paths_file = file_exists('../config/paths.php') ? '../config/paths.php' : './config/paths.php';
+    include_once $paths_file;
+}
+?>
+<link rel="stylesheet" href="<?php echo $css_url; ?>footer.css">
+<style>
+    /* Override pour réduire la hauteur du footer */
+    .footer-container {
+        padding: 1.5rem 0 0.5rem !important;
+    }
+    .footer-content {
+        padding-bottom: 1rem !important;
+        gap: 1rem !important;
+    }
+    .footer-section {
+        margin-bottom: 0.5rem !important;
+    }
+    .footer-section h3 {
+        margin-bottom: 0.5rem !important;
+        font-size: 1.1rem !important;
+    }
+    .footer-section p, .footer-section li {
+        margin-bottom: 0.3rem !important;
+        font-size: 0.9rem !important;
+    }
+    .footer-bottom {
+        padding: 0.5rem 0 !important;
+    }
+</style>
 <footer class="footer-container">
     <div class="footer-content">
         <div class="footer-section about">

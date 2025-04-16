@@ -4,8 +4,6 @@
 # VS Code project files
 .vscode/
 
-# Composer vendor directory
-/vendor/
 
 # Configuration files with sensitive information
 config/config.php
