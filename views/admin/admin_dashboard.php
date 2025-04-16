@@ -119,6 +119,116 @@ $activeAdmins = getActiveUsers($pdo, true);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/admin_dashboard.css">
+    <style>
+        /* Styles pour les modals */
+        .modal-content {
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            background: #4a90e2;
+            color: white;
+            border-radius: 6px 6px 0 0;
+            padding: 0.75rem 1rem;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Réduire la taille du modal */
+        .modal-sm-custom {
+            max-width: 400px;
+            margin: 1.75rem auto;
+        }
+        
+        /* Styles pour les listes d'utilisateurs */
+        .user-list-item {
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 0.4rem;
+            border: 1px solid #eee;
+        }
+        
+        /* Désactivation de l'effet de survol sur demande */
+        /*.user-list-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }*/
+        
+        .user-list-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 2px solid #4a90e2;
+        }
+        
+        .user-list-item .user-info {
+            margin-left: 1rem;
+        }
+        
+        .user-list-item .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-list-item .user-id {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Styles pour le modal de détails */
+        .details-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .details-card .card-header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 1rem;
+        }
+        
+        .details-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .details-card .info-group {
+            margin-bottom: 1rem;
+        }
+        
+        .details-card .info-label {
+            font-weight: 600;
+            color: #4a90e2;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        
+        .details-card .info-value {
+            color: #333;
+            padding: 0.4rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .details-card .motif-box {
+            background-color: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 6px;
+            border-left: 3px solid #4a90e2;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <?php include '../../includes/sidebar.php'; ?>
@@ -160,7 +270,7 @@ $activeAdmins = getActiveUsers($pdo, true);
 
         <section class="recent-requests">
             <h2>Demandes Récentes</h2>
-            <table class="table table-hover">
+            <table class="table">
                 <thead class="table-light">
                     <tr>
                         <th>Utilisateur</th>
@@ -237,7 +347,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                                 <div class="modal fade" id="detailsModal<?= htmlspecialchars($demande['id_demande']) ?>" 
                                      tabindex="-1" aria-labelledby="detailsModalLabel<?= htmlspecialchars($demande['id_demande']) ?>" 
                                      aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-sm-custom">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="detailsModalLabel<?= htmlspecialchars($demande['id_demande']) ?>">
@@ -246,30 +356,38 @@ $activeAdmins = getActiveUsers($pdo, true);
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="card">
-                                                    <div class="card-header bg-primary text-white">
-                                                        Informations de la demande #<?= htmlspecialchars($demande['id_demande']) ?>
-                                                    </div>
+                                                <div class="details-card">
+                                                    
                                                     <div class="card-body">
-                                                        <div class="mb-3">
-                                                            <h6 class="fw-bold">Utilisateur:</h6>
-                                                            <p><?= htmlspecialchars($demande['nom_utilisateur'] . ' ' . $demande['prenom_utilisateur']) ?></p>
+                                                        <div class="info-group">
+                                                            <div class="info-label">Utilisateur</div>
+                                                            <div class="info-value">
+                                                                <?= htmlspecialchars($demande['nom_utilisateur'] . ' ' . $demande['prenom_utilisateur']) ?>
+                                                            </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <h6 class="fw-bold">Matériel:</h6>
-                                                            <p><?= htmlspecialchars($demande['nom_materiel']) ?> (<?= htmlspecialchars($demande['type_materiel'] ?? 'N/A') ?>)</p>
+                                                        <div class="info-group">
+                                                            <div class="info-label">Matériel</div>
+                                                            <div class="info-value">
+                                                                <?= htmlspecialchars($demande['nom_materiel']) ?> 
+                                                                (<?= htmlspecialchars($demande['type_materiel'] ?? 'N/A') ?>)
+                                                            </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <h6 class="fw-bold">Quantité:</h6>
-                                                            <p><?= htmlspecialchars($demande['quantite']) ?> (Disponible: <?= htmlspecialchars($demande['quantite_disponible']) ?>)</p>
+                                                        <div class="info-group">
+                                                            <div class="info-label">Quantité</div>
+                                                            <div class="info-value">
+                                                                <?= htmlspecialchars($demande['quantite']) ?> 
+                                                                (Disponible: <?= htmlspecialchars($demande['quantite_disponible']) ?>)
+                                                            </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <h6 class="fw-bold">Date de demande:</h6>
-                                                            <p><?= date('d/m/Y à H:i', strtotime($demande['date_demande'])) ?></p>
+                                                        <div class="info-group">
+                                                            <div class="info-label">Date de demande</div>
+                                                            <div class="info-value">
+                                                                <?= date('d/m/Y à H:i', strtotime($demande['date_demande'])) ?>
+                                                            </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <h6 class="fw-bold">Motif de la demande:</h6>
-                                                            <div class="p-3 bg-light rounded">
+                                                        <div class="info-group">
+                                                            <div class="info-label">Motif de la demande</div>
+                                                            <div class="motif-box">
                                                                 <?= !empty($demande['motif']) ? nl2br(htmlspecialchars($demande['motif'])) : '<em>Aucun motif spécifié</em>' ?>
                                                             </div>
                                                         </div>
@@ -292,7 +410,7 @@ $activeAdmins = getActiveUsers($pdo, true);
 
     <!-- Modal pour la liste des administrateurs -->
     <div class="modal fade" id="adminListModal" tabindex="-1" aria-labelledby="adminListModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="adminListModalLabel">Administrateurs connectés</h5>
@@ -300,16 +418,18 @@ $activeAdmins = getActiveUsers($pdo, true);
                 </div>
                 <div class="modal-body">
                     <?php if (empty($activeAdmins)): ?>
-                        <p class="text-center">Aucun administrateur connecté</p>
+                        <p class="text-center text-muted">Aucun administrateur connecté</p>
                     <?php else: ?>
                         <?php foreach ($activeAdmins as $admin): 
                             $photo = $admin['photo'] ?: 'uploads/admin_photos/default_profile.png';
                         ?>
-                            <div class="d-flex align-items-center mb-3">
-                                <span><?= htmlspecialchars($admin['id_admin']) ?></span>
+                            <div class="user-list-item d-flex align-items-center">
                                 <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
-                                     class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
-                                <span><?= htmlspecialchars($admin['nom'] . ' ' . $admin['prenom']) ?></span>
+                                     class="rounded-circle">
+                                <div class="user-info">
+                                    <div class="user-name"><?= htmlspecialchars($admin['nom'] . ' ' . $admin['prenom']) ?></div>
+                                    <div class="user-id">ID: <?= htmlspecialchars($admin['id_admin']) ?></div>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -323,7 +443,7 @@ $activeAdmins = getActiveUsers($pdo, true);
 
     <!-- Modal pour la liste des utilisateurs -->
     <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm-custom">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="userListModalLabel">Utilisateurs connectés</h5>
@@ -331,16 +451,18 @@ $activeAdmins = getActiveUsers($pdo, true);
                 </div>
                 <div class="modal-body">
                     <?php if (empty($activeUsers)): ?>
-                        <p class="text-center">Aucun utilisateur connecté</p>
+                        <p class="text-center text-muted">Aucun utilisateur connecté</p>
                     <?php else: ?>
                         <?php foreach ($activeUsers as $user): 
                             $photo = $user['photo'] ?: 'uploads/admin_photos/default_profile.png';
                         ?>
-                            <div class="d-flex align-items-center mb-3">
-                                <span><?= htmlspecialchars($user['id_utilisateur']) ?></span>
+                            <div class="user-list-item d-flex align-items-center">
                                 <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
-                                     class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
-                                <span><?= htmlspecialchars($user['nom'] . ' ' . $user['prenom']) ?></span>
+                                     class="rounded-circle">
+                                <div class="user-info">
+                                    <div class="user-name"><?= htmlspecialchars($user['nom'] . ' ' . $user['prenom']) ?></div>
+                                    <div class="user-id">ID: <?= htmlspecialchars($user['id_utilisateur']) ?></div>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -355,5 +477,17 @@ $activeAdmins = getActiveUsers($pdo, true);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/admin_dashboard.js"></script>
+    <script>
+        // Supprimer les événements de survol et conserver uniquement les clics
+        $(document).ready(function() {
+            // Désactiver l'effet de survol sur les lignes du tableau
+            $('.request-row').off('mouseenter mouseleave');
+            
+            // Conserver uniquement l'événement clic pour les modals
+            $('.request-row').on('click', function() {
+                // Le modal sera ouvert via l'attribut data-bs-toggle et data-bs-target
+            });
+        });
+    </script>
 </body>
 </html>
