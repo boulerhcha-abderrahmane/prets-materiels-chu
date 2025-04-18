@@ -149,6 +149,21 @@ $activeAdmins = getActiveUsers($pdo, true);
             margin: 1.75rem auto;
         }
         
+        /* Style pour les stat-box clickables */
+        .stat-box.clickable {
+            transition: background-color 0.2s;
+        }
+        
+        .stat-box.clickable:hover {
+            background-color: #f5f9ff;
+        }
+        
+        /* Masquer les boutons détails dans les stat-box */
+        .stat-box .btn-modal,
+        .stat-box .btn-details {
+            display: none !important;
+        }
+        
         /* Styles pour les listes d'utilisateurs */
         .user-list-item {
             padding: 0.8rem;
@@ -156,12 +171,6 @@ $activeAdmins = getActiveUsers($pdo, true);
             margin-bottom: 0.4rem;
             border: 1px solid #eee;
         }
-        
-        /* Désactivation de l'effet de survol sur demande */
-        /*.user-list-item:hover {
-            background-color: #f8f9fa;
-            transform: translateX(5px);
-        }*/
         
         .user-list-item img {
             width: 50px;
@@ -258,11 +267,11 @@ $activeAdmins = getActiveUsers($pdo, true);
                 <i class="fas fa-clock"></i> Demandes en attente: 
                 <span id="pending-requests"><?= htmlspecialchars($counts['pending_requests']) ?></span>
             </div>
-            <div class="stat-box" data-bs-toggle="modal" data-bs-target="#userListModal" style="cursor: pointer;">
+            <div class="stat-box clickable" onclick="openModal('userListModal')" style="cursor: pointer;">
                 <i class="fas fa-users"></i> Utilisateurs connectés: 
                 <span id="users-count"><?= htmlspecialchars($counts['active_users']) ?></span>
             </div>
-            <div class="stat-box" data-bs-toggle="modal" data-bs-target="#adminListModal" style="cursor: pointer;">
+            <div class="stat-box clickable" onclick="openModal('adminListModal')" style="cursor: pointer;">
                 <i class="fas fa-users"></i> Administrateurs connectés: 
                 <span id="admin-count"><?= htmlspecialchars($counts['active_admins']) ?></span>
             </div>
@@ -351,7 +360,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                                 </td>
                                 
                                 <!-- Modal Détails -->
-                                <div class="modal fade" id="detailsModal<?= htmlspecialchars($demande['id_demande']) ?>" 
+                                <div class="modal" id="detailsModal<?= htmlspecialchars($demande['id_demande']) ?>" 
                                      tabindex="-1" aria-labelledby="detailsModalLabel<?= htmlspecialchars($demande['id_demande']) ?>" 
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-sm-custom">
@@ -407,7 +416,7 @@ $activeAdmins = getActiveUsers($pdo, true);
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal('detailsModal<?= htmlspecialchars($demande['id_demande']) ?>')">Fermer</button>
                                             </div>
                                         </div>
                                     </div>
@@ -432,18 +441,19 @@ $activeAdmins = getActiveUsers($pdo, true);
                     <?php if (empty($activeAdmins)): ?>
                         <p class="text-center text-muted">Aucun administrateur connecté</p>
                     <?php else: ?>
+                        <ul class="list-group">
                         <?php foreach ($activeAdmins as $admin): 
                             $photo = $admin['photo'] ?: 'uploads/admin_photos/default_profile.png';
                         ?>
-                            <div class="user-list-item d-flex align-items-center">
-                                <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
-                                     class="rounded-circle">
-                                <div class="user-info">
-                                    <div class="user-name"><?= htmlspecialchars($admin['nom'] . ' ' . $admin['prenom']) ?></div>
-                                    <div class="user-id">ID: <?= htmlspecialchars($admin['id_admin']) ?></div>
+                            <li class="list-group-item">
+                                <div class="d-flex align-items-center">
+                                    <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
+                                         class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <span class="fw-bold"><?= htmlspecialchars($admin['nom'] . ' ' . $admin['prenom']) ?></span>
                                 </div>
-                            </div>
+                            </li>
                         <?php endforeach; ?>
+                        </ul>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
@@ -465,18 +475,19 @@ $activeAdmins = getActiveUsers($pdo, true);
                     <?php if (empty($activeUsers)): ?>
                         <p class="text-center text-muted">Aucun utilisateur connecté</p>
                     <?php else: ?>
+                        <ul class="list-group">
                         <?php foreach ($activeUsers as $user): 
                             $photo = $user['photo'] ?: 'uploads/admin_photos/default_profile.png';
                         ?>
-                            <div class="user-list-item d-flex align-items-center">
-                                <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
-                                     class="rounded-circle">
-                                <div class="user-info">
-                                    <div class="user-name"><?= htmlspecialchars($user['nom'] . ' ' . $user['prenom']) ?></div>
-                                    <div class="user-id">ID: <?= htmlspecialchars($user['id_utilisateur']) ?></div>
+                            <li class="list-group-item">
+                                <div class="d-flex align-items-center">
+                                    <img src="../../<?= htmlspecialchars($photo) ?>" alt="Photo de profil" 
+                                         class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <span class="fw-bold"><?= htmlspecialchars($user['nom'] . ' ' . $user['prenom']) ?></span>
                                 </div>
-                            </div>
+                            </li>
                         <?php endforeach; ?>
+                        </ul>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
@@ -489,5 +500,63 @@ $activeAdmins = getActiveUsers($pdo, true);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/admin_dashboard.js"></script>
+    <script>
+        function openModal(modalId) {
+            const modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                // Nettoyer d'abord les backdrops existants
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+        }
+        
+        function closeModal(modalId) {
+            const modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Forcer le nettoyage complet après fermeture
+                setTimeout(() => {
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }, 300);
+            }
+        }
+        
+        // Amélioration globale pour tous les modals de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attacher à tous les boutons de fermeture de modal
+            document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(() => {
+                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }, 300);
+                });
+            });
+            
+            // Ajouter un écouteur à tous les modals
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

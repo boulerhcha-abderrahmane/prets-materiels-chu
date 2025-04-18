@@ -32,18 +32,26 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.addEventListener('show.bs.modal', function() {
             this.setAttribute('aria-hidden', 'false');
         });
-    });
-    
-    // Améliorer la gestion des boutons de fermeture des modals
-    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const modalElement = this.closest('.modal');
-            if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) {
-                    modal.hide();
+        
+        // S'assurer que les modals se ferment correctement
+        const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                try {
+                    const modal = bootstrap.Modal.getInstance(this.closest('.modal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                } catch(e) {
+                    console.error('Erreur lors de la fermeture du modal:', e);
+                    // Fermeture forcée en cas d'erreur
+                    this.closest('.modal').style.display = 'none';
+                    document.querySelector('.modal-backdrop')?.remove();
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
                 }
-            }
+            });
         });
     });
 
@@ -57,6 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function restrictModalTriggers() {
     // Retirer l'attribut data-bs-toggle de tous les éléments non-boutons
     document.querySelectorAll('[data-bs-toggle="modal"]').forEach(element => {
+        // Ne pas modifier les stat-box clickables
+        if (element.classList.contains('clickable')) {
+            return;
+        }
+        
         // Si ce n'est pas un bouton dédié, retirer l'attribut
         if (!element.classList.contains('btn-modal') && 
             !element.classList.contains('btn-details') && 
@@ -116,6 +129,9 @@ function initDashboard() {
     
     // Limiter l'ouverture des modals aux boutons dédiés
     restrictModalTriggers();
+    
+    // Initialiser les éléments clickables pour ouvrir les modals
+    initClickableElements();
 }
 
 /**
@@ -179,6 +195,10 @@ function initDetailsButtons() {
                         item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                     });
                     
+                    // Nettoyer les backdrops existants
+                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    
+                    // Afficher le modal
                     modal.show();
                 }
             });
@@ -193,7 +213,43 @@ function initDetailsButtons() {
                 const modal = bootstrap.Modal.getInstance(modalElement);
                 if (modal) {
                     modal.hide();
+                    
+                    // Forcer le nettoyage de l'arrière-plan et des styles
+                    setTimeout(() => {
+                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }, 300); // Attendre la fin de l'animation
                 }
+            }
+        });
+    });
+    
+    // Ajouter un gestionnaire global pour les événements de fermeture de modal
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function() {
+            // Nettoyer après la fermeture du modal
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        });
+    });
+}
+
+/**
+ * Initialise les éléments clickables (comme les stat-box) pour ouvrir les modals
+ */
+function initClickableElements() {
+    document.querySelectorAll('.clickable[data-bs-toggle="modal"]').forEach(element => {
+        element.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target');
+            const modalElement = document.querySelector(targetId);
+            
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
             }
         });
     });
