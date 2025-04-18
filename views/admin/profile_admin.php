@@ -199,6 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             overflow: hidden;
             position: relative;
+            cursor: zoom-in;
+            animation: subtle-pulse 3s ease-in-out infinite;
         }
 
         .photo-container img {
@@ -209,11 +211,172 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .photo-container:hover {
+            animation: none;
             transform: scale(1.05) rotate(3deg);
         }
 
         .photo-container:hover img {
             transform: scale(1.1);
+        }
+        
+        /* Zoom Icon */
+        .zoom-icon {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(165deg,
+                rgba(74, 144, 226, 0.2) 0%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .zoom-icon i {
+            color: white;
+            font-size: 24px;
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .photo-container:hover .zoom-icon {
+            opacity: 1;
+        }
+
+        .photo-container:hover .zoom-icon i {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Shine Effect */
+        .shine-effect {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0) 45%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 55%,
+                transparent 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .photo-container:hover .shine-effect {
+            opacity: 1;
+            animation: shine 1s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%);
+            }
+        }
+        
+        /* Pulse Animation */
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Zoom Modal Styles */
+        #photoZoomModal .modal-content {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: none;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+            animation: modalFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        #photoZoomModal .modal-header {
+            border-bottom: none;
+            padding: 20px 25px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+        }
+        
+        #photoZoomModal .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        #photoZoomModal .btn-close {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            padding: 12px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        #photoZoomModal .btn-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+        
+        #photoZoomModal .modal-body {
+            padding: 0;
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.5) 0%, rgba(240, 242, 245, 0.5) 100%);
+        }
+        
+        #zoomedImage {
+            max-height: 80vh;
+            object-fit: contain;
+            padding: 25px;
+            border-radius: 15px;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+        }
+        
+        #zoomedImage:hover {
+            transform: scale(1.02);
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.15));
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal.fade .modal-dialog {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .modal.fade.show .modal-dialog {
+            transform: none;
+        }
+        
+        /* Effet de transition pour l'application entière */
+        .modal-content {
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
         }
 
         /* Section photo */
@@ -579,8 +742,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="profile-header">
             <div class="photo-section">
-                <div class="photo-container">
+                <div class="photo-container" onclick="openPhotoZoom()">
                     <img src="<?= !empty($admin['photo']) ? '../../' . $admin['photo'] : '../../' . $default_image ?>" alt="Photo de Profil" id="previewImage">
+                    <div class="zoom-icon">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                    <div class="shine-effect"></div>
                 </div>
                 <div class="photo-buttons">
                     <button type="button" class="btn btn-primary btn-sm photo-btn" onclick="document.getElementById('photoInput').click();">
@@ -621,20 +788,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="prenom">Prénom</label>
-                            <input type="text" class="form-control" id="prenom" name="prenom" value="<?= htmlspecialchars($admin['prenom']) ?>" required>
+                            <input type="text" class="form-control" id="prenom" name="prenom" value="<?= htmlspecialchars($admin['prenom']) ?>" required autocomplete="given-name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="nom">Nom</label>
-                            <input type="text" class="form-control" id="nom" name="nom" value="<?= htmlspecialchars($admin['nom']) ?>" required>
+                            <input type="text" class="form-control" id="nom" name="nom" value="<?= htmlspecialchars($admin['nom']) ?>" required autocomplete="family-name">
                         </div>
                     </div>
                 </div>
                 
                 <div class="form-group mt-3">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($admin['email']) ?>" <?= $canEditEmail ? '' : 'readonly' ?>>
+                    <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($admin['email']) ?>" <?= $canEditEmail ? '' : 'readonly' ?> autocomplete="email">
                     <?php if (!$canEditEmail): ?>
                         <small class="text-muted fst-italic">Seul le chef administrateur peut modifier l'email.</small>
                     <?php endif; ?>
@@ -642,20 +809,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-group mt-3">
                     <label for="current_password">Mot de passe actuel</label>
-                    <input type="password" class="form-control" id="current_password" name="current_password">
+                    <input type="password" class="form-control" id="current_password" name="current_password" autocomplete="current-password">
                 </div>
 
                 <div class="row g-3 mt-1">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="new_password">Nouveau mot de passe</label>
-                            <input type="password" class="form-control" id="new_password" name="new_password">
+                            <input type="password" class="form-control" id="new_password" name="new_password" autocomplete="new-password">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="confirm_password">Confirmer le nouveau mot de passe</label>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" autocomplete="new-password">
                         </div>
                     </div>
                 </div>
@@ -720,6 +887,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     
+    <!-- Modal de zoom photo -->
+    <div class="modal fade" id="photoZoomModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Photo de profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <img id="zoomedImage" src="" alt="Photo de profil en grand format" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -730,10 +912,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const deletePhotoBtn = document.getElementById('deletePhotoBtn');
         const confirmPhotoChangeBtn = document.getElementById('confirmPhotoChange');
         const confirmDeletePhotoBtn = document.getElementById('confirmDeletePhoto');
+        const photoContainer = document.querySelector('.photo-container');
         
         // Modals
         const photoConfirmModal = new bootstrap.Modal(document.getElementById('photoConfirmModal'));
         const deletePhotoModal = new bootstrap.Modal(document.getElementById('deletePhotoModal'));
+        const photoZoomModal = new bootstrap.Modal(document.getElementById('photoZoomModal'));
+        
+        // Fonction pour ouvrir le modal de zoom
+        function openPhotoZoom() {
+            const previewImage = document.getElementById('previewImage');
+            const zoomedImage = document.getElementById('zoomedImage');
+            
+            // Assurer que l'image source est correcte
+            let imgSrc = previewImage.src;
+            
+            // Si le chemin ne contient pas déjà uploads/admin_photos et ce n'est pas un data URL
+            if (!imgSrc.includes('uploads/admin_photos/') && !imgSrc.startsWith('data:')) {
+                // Extraire le nom du fichier de l'URL
+                const fileName = imgSrc.split('/').pop();
+                // Reconstruire l'URL avec le chemin correct
+                imgSrc = '../../uploads/admin_photos/' + fileName;
+            }
+            
+            zoomedImage.src = imgSrc;
+            photoZoomModal.show();
+        }
+        
+        // Ajouter un événement de clic sur la photo pour le zoom
+        if (photoContainer) {
+            photoContainer.style.cursor = 'pointer';
+            photoContainer.addEventListener('click', openPhotoZoom);
+        }
         
         // Gestion du changement de photo
         photoInput.addEventListener('change', function(e) {
