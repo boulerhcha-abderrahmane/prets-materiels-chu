@@ -193,6 +193,17 @@ $activeAdmins = getActiveUsers($pdo, true);
             color: #666;
         }
         
+        /* Styles pour la bordure lumineuse des listes dans les modaux */
+        .modal .list-group-item {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0  0 1px 2px rgb(33, 164, 240);
+        }
+        
+       
+        /* Animation de la bordure lumineuse */
         /* Styles pour le modal de détails */
         .details-card {
             border: none;
@@ -236,6 +247,16 @@ $activeAdmins = getActiveUsers($pdo, true);
             border-radius: 6px;
             border-left: 3px solid #4a90e2;
             font-size: 0.9rem;
+        }
+        
+        /* Réduire l'opacité du backdrop des modals */
+        .modal-backdrop {
+            opacity: 0.3 !important;
+        }
+        
+        /* Assurer que le modal est bien visible */
+        .modal-dialog {
+            z-index: 1056;
         }
     </style>
 </head>

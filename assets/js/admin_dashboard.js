@@ -31,6 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Quand le modal s'ouvre
         modal.addEventListener('show.bs.modal', function() {
             this.setAttribute('aria-hidden', 'false');
+            
+            // Ajuster l'opacité du backdrop
+            setTimeout(() => {
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => {
+                    backdrop.style.opacity = '0.3';
+                });
+            }, 0);
         });
         
         // S'assurer que les modals se ferment correctement
@@ -182,6 +190,12 @@ function initDetailsButtons() {
                                 item.style.opacity = '1';
                                 item.style.transform = 'translateY(0)';
                             }, 100 * (index + 1));
+                        });
+                        
+                        // Ajuster l'opacité du backdrop
+                        const backdrops = document.querySelectorAll('.modal-backdrop');
+                        backdrops.forEach(backdrop => {
+                            backdrop.style.opacity = '0.3';
                         });
                         
                         this.removeEventListener('shown.bs.modal', onShown);
@@ -369,4 +383,29 @@ function setComment(button) {
     // Définir le commentaire dans le champ caché
     form.querySelector('.comment-input').value = commentText;
     return true;
+}
+
+/**
+ * Ouvrir un modal manuellement avec un backdrop plus clair
+ */
+function openModal(modalId) {
+    const modalElement = document.getElementById(modalId);
+    if (modalElement) {
+        // Nettoyer d'abord les backdrops existants
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        
+        // Réduire l'opacité du backdrop après ouverture
+        setTimeout(() => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => {
+                backdrop.style.opacity = '0.3';
+            });
+        }, 10);
+    }
 } 
